@@ -380,6 +380,17 @@ code {
   background: rgba(81, 212, 165, 0.1);
 }
 
+.maintenance-panel {
+  margin-bottom: 18px;
+}
+
+.maintenance-panel p {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
 .danger-row {
   margin-bottom: 18px;
 }

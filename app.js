@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.4";
+const APP_VERSION = "v1.0.5";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 
@@ -109,8 +109,8 @@ function todayKey(date = new Date()) {
 }
 
 function readableDateTime(value) {
-  if (!value) return "unknown time";
-  return new Intl.DateTimeFormat("en-US", {
+  if (!value) return "未知時間";
+  return new Intl.DateTimeFormat("zh-TW", {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(value));
@@ -152,28 +152,28 @@ function updateCurrencyButtons() {
 function updateFxStatus(mode = "") {
   if (state.manualFx) {
     els.fxStatus.textContent = hasSavedFx()
-      ? "Manual FX mode: using entered FX rates"
-      : "Manual FX mode: please enter USD/TWD and EUR/TWD";
+      ? "手動匯率模式：使用手動輸入匯率"
+      : "手動匯率模式：請輸入 USD/TWD 與 EUR/TWD";
     return;
   }
 
   if (!hasSavedFx()) {
-    els.fxStatus.textContent = "No saved FX rate: please enter manually";
+    els.fxStatus.textContent = "沒有已儲存匯率，請手動輸入";
     return;
   }
 
   const savedAt = readableDateTime(state.fx.fetchedAt);
   if (!navigator.onLine) {
-    els.fxStatus.textContent = `Offline: using saved FX rate from ${savedAt}`;
+    els.fxStatus.textContent = `離線：使用已儲存匯率 ${savedAt}`;
     return;
   }
 
   if (mode === "api-failed") {
-    els.fxStatus.textContent = `API unavailable: using saved FX rate from ${savedAt}`;
+    els.fxStatus.textContent = `匯率來源暫時無法使用：使用已儲存匯率 ${savedAt}`;
     return;
   }
 
-  els.fxStatus.textContent = "Online: using latest daily FX rate";
+  els.fxStatus.textContent = "線上：使用最新每日匯率";
 }
 
 async function fetchRates(force = false) {
@@ -192,7 +192,7 @@ async function fetchRates(force = false) {
     return;
   }
 
-  els.fxStatus.textContent = "Updating FX rate...";
+  els.fxStatus.textContent = "匯率更新中...";
 
   try {
     const response = await fetch(FX_API_URL, { cache: "no-store" });
@@ -243,13 +243,13 @@ function calculate() {
   const months = Math.max(0, Math.floor(numberValue(state.installmentMonths)));
   const monthly = months ? priceTwd / months : 0;
   els.monthlyPayment.textContent = formatCurrency(monthly, "TWD");
-  els.monthlyShares.textContent = `${formatShares(price0050 ? monthly / price0050 : 0)} shares of 0050`;
+  els.monthlyShares.textContent = `${formatShares(price0050 ? monthly / price0050 : 0)} 股 0050`;
 
   const current = numberValue(state.current0050);
   const target = numberValue(state.target0050);
   const remaining = Math.max(target - current, 0);
-  els.sharesRemaining.textContent = `${formatShares(remaining)} remaining`;
-  els.purchaseDelay.textContent = `Purchase equals ${formatShares(shares0050)} shares of 0050`;
+  els.sharesRemaining.textContent = `剩餘 ${formatShares(remaining)} 股`;
+  els.purchaseDelay.textContent = `本次消費約等於 ${formatShares(shares0050)} 股 0050`;
 }
 
 function bindInput(input, update) {
@@ -312,7 +312,7 @@ function bindEvents() {
   els.updateRatesBtn.addEventListener("click", () => fetchRates(true));
 
   els.resetBtn.addEventListener("click", () => {
-    if (!confirm("Reset all saved Asset Price Lens values?")) return;
+    if (!confirm("確定要重設所有已儲存資料？")) return;
     localStorage.removeItem(STORAGE_KEY);
     state = loadState();
     syncInputs();
@@ -325,9 +325,15 @@ function bindEvents() {
     }
     if ("caches" in window) {
       const names = await caches.keys();
-      await Promise.all(names.map((name) => caches.delete(name)));
+      await Promise.all(
+        names
+          .filter((name) => name.includes("asset-price-lens"))
+          .map((name) => caches.delete(name))
+      );
     }
-    window.location.reload();
+    const url = new URL(window.location.href);
+    url.searchParams.set("refresh", Date.now().toString());
+    window.location.replace(url.toString());
   });
 
   window.addEventListener("online", () => fetchRates(false));

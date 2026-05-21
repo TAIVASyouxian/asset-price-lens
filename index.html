@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#101820">
-    <meta name="description" content="Personal PWA calculator for converting product prices into ETF share equivalents.">
+    <meta name="description" content="個人使用的 ETF 股數換算 PWA。">
     <title>資產尺</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23101820'/%3E%3Ccircle cx='170' cy='178' r='76' fill='%2351d4a5'/%3E%3Cpath d='M224 232l118 118' stroke='%23f5f7fa' stroke-width='44' stroke-linecap='round'/%3E%3Cpath d='M112 348h288' stroke='%238be4c5' stroke-width='34' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -17,13 +17,13 @@
           <p class="eyebrow">價格換算成 ETF 股數</p>
           <h1>資產尺</h1>
         </div>
-        <span class="version" id="appVersion">v1.0.4</span>
+        <span class="version" id="appVersion">v1.0.5</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
         <div class="section-title">
           <h2 id="price-heading">商品價格</h2>
-          <span class="status-pill" id="fxStatus">Loading FX rate...</span>
+          <span class="status-pill" id="fxStatus">載入匯率中...</span>
         </div>
 
         <label class="field big-field" for="productPrice">
@@ -43,21 +43,21 @@
         </div>
       </section>
 
-      <section class="results-grid" aria-label="ETF share equivalents">
+      <section class="results-grid" aria-label="ETF 股數換算結果">
         <article class="result-card">
           <span>0050.TW</span>
           <strong id="shares0050">0</strong>
-          <small>shares</small>
+          <small>股</small>
         </article>
         <article class="result-card">
           <span>VT</span>
           <strong id="sharesVT">0</strong>
-          <small>shares</small>
+          <small>股</small>
         </article>
         <article class="result-card">
           <span>EWL</span>
           <strong id="sharesEWL">0</strong>
-          <small>shares</small>
+          <small>股</small>
         </article>
       </section>
 
@@ -69,15 +69,15 @@
 
         <div class="form-grid">
           <label class="field" for="price0050">
-            <span>0050 price (TWD)</span>
+            <span>0050 價格 (TWD)</span>
             <input id="price0050" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
           <label class="field" for="priceVT">
-            <span>VT price (USD)</span>
+            <span>VT 價格 (USD)</span>
             <input id="priceVT" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
           <label class="field" for="priceEWL">
-            <span>EWL price (USD)</span>
+            <span>EWL 價格 (USD)</span>
             <input id="priceEWL" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
         </div>
@@ -85,8 +85,8 @@
         <div class="form-grid">
           <label class="toggle-field" for="manualFxMode">
             <span>
-              <strong>Manual FX mode</strong>
-              <small>Keep entered FX rates and skip auto updates.</small>
+              <strong>手動匯率模式</strong>
+              <small>使用手動匯率，不自動更新。</small>
             </span>
             <input id="manualFxMode" type="checkbox">
           </label>
@@ -99,97 +99,100 @@
             <input id="eurTwd" inputmode="decimal" type="number" min="0" step="0.0001">
           </label>
           <label class="field" for="decimalMode">
-            <span>Display mode</span>
+            <span>顯示模式</span>
             <select id="decimalMode">
-              <option value="0">Full purchasable shares</option>
-              <option value="1">One decimal</option>
-              <option value="2">Two decimals</option>
+              <option value="0">可完整購買股數</option>
+              <option value="1">小數點一位</option>
+              <option value="2">小數點兩位</option>
             </select>
           </label>
         </div>
       </section>
 
       <section class="panel" aria-labelledby="extras-heading">
-        <h2 id="extras-heading">Personal extras</h2>
+        <h2 id="extras-heading">個人設定</h2>
         <div class="form-grid">
           <label class="field" for="installmentMonths">
-            <span>Installment months</span>
-            <input id="installmentMonths" inputmode="numeric" type="number" min="1" step="1" placeholder="Optional">
+            <span>分期期數</span>
+            <input id="installmentMonths" inputmode="numeric" type="number" min="1" step="1" placeholder="選填">
           </label>
           <div class="summary-box">
-            <span>Monthly payment</span>
+            <span>每期金額</span>
             <strong id="monthlyPayment">TWD 0</strong>
-            <small id="monthlyShares">0 shares of 0050</small>
+            <small id="monthlyShares">0 股 0050</small>
           </div>
         </div>
 
         <div class="form-grid">
           <label class="field" for="current0050">
-            <span>Current 0050 shares</span>
+            <span>目前 0050 股數</span>
             <input id="current0050" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
           <label class="field" for="target0050">
-            <span>Target 0050 shares</span>
+            <span>目標 0050 股數</span>
             <input id="target0050" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
           <div class="summary-box">
-            <span>Goal view</span>
-            <strong id="sharesRemaining">0 remaining</strong>
-            <small id="purchaseDelay">Purchase equals 0 shares of 0050</small>
+            <span>目標進度</span>
+            <strong id="sharesRemaining">剩餘 0 股</strong>
+            <small id="purchaseDelay">本次消費約等於 0 股 0050</small>
           </div>
         </div>
       </section>
 
       <section class="panel" aria-labelledby="install-heading">
-        <h2 id="install-heading">Install and deploy</h2>
+        <h2 id="install-heading">安裝與部署</h2>
         <details>
-          <summary>Local testing</summary>
+          <summary>本機測試</summary>
           <ol>
-            <li>Open a terminal in the <code>asset-price-lens</code> folder.</li>
-            <li>Run <code>python -m http.server 8000</code>.</li>
-            <li>Open <code>http://localhost:8000</code>.</li>
+            <li>在 <code>asset-price-lens</code> 資料夾開啟終端機。</li>
+            <li>執行 <code>python -m http.server 8000</code>。</li>
+            <li>開啟 <code>http://localhost:8000</code>。</li>
           </ol>
         </details>
         <details>
           <summary>GitHub Pages</summary>
           <ol>
-            <li>Create a GitHub repository and upload these files.</li>
-            <li>Go to Settings, Pages.</li>
-            <li>Select Deploy from a branch, choose the main branch and root folder, then save.</li>
+            <li>建立 GitHub repository，並上傳這些檔案。</li>
+            <li>進入 Settings，Pages。</li>
+            <li>選擇從 branch 部署，選 main branch 與 root folder，然後儲存。</li>
           </ol>
         </details>
         <details>
           <summary>Vercel</summary>
           <ol>
-            <li>Import the repository in Vercel.</li>
-            <li>Use the static default settings. No build command is required.</li>
-            <li>Deploy and open the generated URL.</li>
+            <li>在 Vercel 匯入 repository。</li>
+            <li>使用靜態網站預設設定，不需要 build command。</li>
+            <li>部署後開啟產生的網址。</li>
           </ol>
         </details>
         <details>
-          <summary>Phone install</summary>
+          <summary>手機安裝</summary>
           <ol>
-            <li>iPhone Safari: Share, Add to Home Screen, Add.</li>
-            <li>Android Chrome: Menu, Add to Home screen or Install app.</li>
+            <li>iPhone Safari：分享，加入主畫面，新增。</li>
+            <li>Android Chrome：選單，加入主畫面或安裝應用程式。</li>
           </ol>
         </details>
         <details>
-          <summary>Update later</summary>
+          <summary>日後更新</summary>
           <ol>
-            <li>Edit the files and increase the app version in <code>app.js</code>, <code>index.html</code>, and <code>service-worker.js</code>.</li>
-            <li>Deploy the changed files.</li>
-            <li>Open the app and tap Reload app / Clear cache.</li>
+            <li>修改檔案，並同步提高 <code>app.js</code>、<code>index.html</code> 與 <code>service-worker.js</code> 的版本。</li>
+            <li>部署更新後的檔案。</li>
+            <li>開啟 app，點選重新載入 / 清除快取。</li>
           </ol>
         </details>
       </section>
 
-      <section class="danger-row" aria-label="App maintenance">
-        <button type="button" class="secondary-button" id="reloadAppBtn">Reload app / Clear cache</button>
-        <button type="button" class="danger-button" id="resetBtn">Reset saved values</button>
+      <section class="maintenance-panel" aria-label="App 維護">
+        <p>如果手機版沒有更新，請先按此按鈕重新整理快取。若仍未更新，請用 Safari 重新開啟網址，或刪除主畫面圖示後重新加入。</p>
+        <div class="danger-row">
+          <button type="button" class="secondary-button" id="reloadAppBtn">重新載入 / 清除快取</button>
+          <button type="button" class="danger-button" id="resetBtn">重設儲存資料</button>
+        </div>
       </section>
 
       <footer>
-        <p>This tool is for personal estimation only. Exchange rates and ETF prices are approximate and do not constitute investment advice, trading signals, financial recommendations, or guaranteed market data. Please verify actual prices before making financial decisions.</p>
+        <p>本工具僅供個人估算使用。匯率與 ETF 價格僅供約略換算，不構成投資建議、交易訊號、金融建議或保證市場資料。做出金融或消費決策前，請自行確認實際價格。</p>
       </footer>
     </main>
 
