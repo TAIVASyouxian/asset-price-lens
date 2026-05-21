@@ -112,6 +112,7 @@ h2 {
 }
 
 .section-title {
+  flex-wrap: wrap;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -119,10 +120,34 @@ h2 {
   margin-bottom: 14px;
 }
 
+.section-title h2 {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .section-title p {
+  flex: 1 1 180px;
   margin-bottom: 0;
   font-size: 0.82rem;
   text-align: right;
+}
+
+.section-title .status-pill {
+  max-width: 100%;
+  white-space: normal;
+  text-align: right;
+}
+
+@media (max-width: 420px) {
+  .section-title {
+    gap: 8px;
+  }
+
+  .section-title p,
+  .section-title .status-pill {
+    flex-basis: 100%;
+    text-align: left;
+  }
 }
 
 .field,

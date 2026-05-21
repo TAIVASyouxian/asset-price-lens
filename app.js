@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.3";
+const APP_VERSION = "v1.0.4";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 
