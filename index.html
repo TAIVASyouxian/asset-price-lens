@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101820">
+    <meta name="description" content="Personal PWA calculator for converting product prices into ETF share equivalents.">
+    <title>Asset Price Lens</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23101820'/%3E%3Ccircle cx='170' cy='178' r='76' fill='%2351d4a5'/%3E%3Cpath d='M224 232l118 118' stroke='%23f5f7fa' stroke-width='44' stroke-linecap='round'/%3E%3Cpath d='M112 348h288' stroke='%238be4c5' stroke-width='34' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Personal PWA</p>
+          <h1>Asset Price Lens</h1>
+        </div>
+        <span class="version" id="appVersion">v1.0.2</span>
+      </header>
+
+      <section class="panel primary-panel" aria-labelledby="price-heading">
+        <div class="section-title">
+          <h2 id="price-heading">Product price</h2>
+          <span class="status-pill" id="fxStatus">Loading FX rate...</span>
+        </div>
+
+        <label class="field big-field" for="productPrice">
+          <span>Amount</span>
+          <input id="productPrice" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0">
+        </label>
+
+        <div class="segmented" role="group" aria-label="Product currency">
+          <button type="button" data-currency="TWD">TWD</button>
+          <button type="button" data-currency="USD">USD</button>
+          <button type="button" data-currency="EUR">EUR</button>
+        </div>
+
+        <div class="quick-row">
+          <button type="button" class="secondary-button" id="updateRatesBtn">Update rates</button>
+          <span id="convertedPrice">TWD 0</span>
+        </div>
+      </section>
+
+      <section class="results-grid" aria-label="ETF share equivalents">
+        <article class="result-card">
+          <span>0050.TW</span>
+          <strong id="shares0050">0</strong>
+          <small>shares</small>
+        </article>
+        <article class="result-card">
+          <span>VT</span>
+          <strong id="sharesVT">0</strong>
+          <small>shares</small>
+        </article>
+        <article class="result-card">
+          <span>EWL</span>
+          <strong id="sharesEWL">0</strong>
+          <small>shares</small>
+        </article>
+      </section>
+
+      <section class="panel" aria-labelledby="settings-heading">
+        <div class="section-title">
+          <h2 id="settings-heading">Settings</h2>
+          <p>ETF prices are manually entered estimates.</p>
+        </div>
+
+        <div class="form-grid">
+          <label class="field" for="price0050">
+            <span>0050 price (TWD)</span>
+            <input id="price0050" inputmode="decimal" type="number" min="0" step="0.01">
+          </label>
+          <label class="field" for="priceVT">
+            <span>VT price (USD)</span>
+            <input id="priceVT" inputmode="decimal" type="number" min="0" step="0.01">
+          </label>
+          <label class="field" for="priceEWL">
+            <span>EWL price (USD)</span>
+            <input id="priceEWL" inputmode="decimal" type="number" min="0" step="0.01">
+          </label>
+        </div>
+
+        <div class="form-grid">
+          <label class="toggle-field" for="manualFxMode">
+            <span>
+              <strong>Manual FX mode</strong>
+              <small>Keep entered FX rates and skip auto updates.</small>
+            </span>
+            <input id="manualFxMode" type="checkbox">
+          </label>
+          <label class="field" for="usdTwd">
+            <span>USD/TWD</span>
+            <input id="usdTwd" inputmode="decimal" type="number" min="0" step="0.0001">
+          </label>
+          <label class="field" for="eurTwd">
+            <span>EUR/TWD</span>
+            <input id="eurTwd" inputmode="decimal" type="number" min="0" step="0.0001">
+          </label>
+          <label class="field" for="decimalMode">
+            <span>Display mode</span>
+            <select id="decimalMode">
+              <option value="0">Full purchasable shares</option>
+              <option value="1">One decimal</option>
+              <option value="2">Two decimals</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="extras-heading">
+        <h2 id="extras-heading">Personal extras</h2>
+        <div class="form-grid">
+          <label class="field" for="installmentMonths">
+            <span>Installment months</span>
+            <input id="installmentMonths" inputmode="numeric" type="number" min="1" step="1" placeholder="Optional">
+          </label>
+          <div class="summary-box">
+            <span>Monthly payment</span>
+            <strong id="monthlyPayment">TWD 0</strong>
+            <small id="monthlyShares">0 shares of 0050</small>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="field" for="current0050">
+            <span>Current 0050 shares</span>
+            <input id="current0050" inputmode="decimal" type="number" min="0" step="0.01">
+          </label>
+          <label class="field" for="target0050">
+            <span>Target 0050 shares</span>
+            <input id="target0050" inputmode="decimal" type="number" min="0" step="0.01">
+          </label>
+          <div class="summary-box">
+            <span>Goal view</span>
+            <strong id="sharesRemaining">0 remaining</strong>
+            <small id="purchaseDelay">Purchase equals 0 shares of 0050</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="install-heading">
+        <h2 id="install-heading">Install and deploy</h2>
+        <details>
+          <summary>Local testing</summary>
+          <ol>
+            <li>Open a terminal in the <code>asset-price-lens</code> folder.</li>
+            <li>Run <code>python -m http.server 8000</code>.</li>
+            <li>Open <code>http://localhost:8000</code>.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>GitHub Pages</summary>
+          <ol>
+            <li>Create a GitHub repository and upload these files.</li>
+            <li>Go to Settings, Pages.</li>
+            <li>Select Deploy from a branch, choose the main branch and root folder, then save.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>Vercel</summary>
+          <ol>
+            <li>Import the repository in Vercel.</li>
+            <li>Use the static default settings. No build command is required.</li>
+            <li>Deploy and open the generated URL.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>Phone install</summary>
+          <ol>
+            <li>iPhone Safari: Share, Add to Home Screen, Add.</li>
+            <li>Android Chrome: Menu, Add to Home screen or Install app.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>Update later</summary>
+          <ol>
+            <li>Edit the files and increase the app version in <code>app.js</code>, <code>index.html</code>, and <code>service-worker.js</code>.</li>
+            <li>Deploy the changed files.</li>
+            <li>Open the app and tap Reload app / Clear cache.</li>
+          </ol>
+        </details>
+      </section>
+
+      <section class="danger-row" aria-label="App maintenance">
+        <button type="button" class="secondary-button" id="reloadAppBtn">Reload app / Clear cache</button>
+        <button type="button" class="danger-button" id="resetBtn">Reset saved values</button>
+      </section>
+
+      <footer>
+        <p>This tool is for personal estimation only. Exchange rates and ETF prices are approximate and do not constitute investment advice, trading signals, financial recommendations, or guaranteed market data. Please verify actual prices before making financial decisions.</p>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

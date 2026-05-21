@@ -1,0 +1,21 @@
+{
+  "name": "Asset Price Lens",
+  "short_name": "Price Lens",
+  "description": "Personal ETF share equivalent calculator.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101820",
+  "theme_color": "#101820",
+  "orientation": "portrait",
+  "lang": "en",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23101820'/%3E%3Ccircle cx='170' cy='178' r='76' fill='%2351d4a5'/%3E%3Cpath d='M224 232l118 118' stroke='%23f5f7fa' stroke-width='44' stroke-linecap='round'/%3E%3Cpath d='M112 348h288' stroke='%238be4c5' stroke-width='34' stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
