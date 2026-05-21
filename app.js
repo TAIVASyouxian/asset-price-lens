@@ -1,6 +1,7 @@
-const APP_VERSION = "v1.0.8";
+const APP_VERSION = "v1.0.9";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
+const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
 
 const defaults = {
   productPrice: "",
@@ -8,6 +9,7 @@ const defaults = {
   decimalMode: "2",
   manualFx: false,
   autoDailyFxUpdate: true,
+  lastManualFxUpdateAt: "",
   prices: {
     price_0050_twd: 180,
     price_tsmc_twd: "",
@@ -251,9 +253,39 @@ async function fetchRates(force = false) {
     saveState();
     syncInputs();
     els.fxStatus.textContent = "線上：使用最新每日匯率";
+    return true;
   } catch {
     updateFxStatus(hasSavedFx() ? "api-failed" : "");
+    return false;
   }
+}
+
+function manualFxCooldownActive() {
+  if (!state.lastManualFxUpdateAt) return false;
+  const lastManualUpdate = new Date(state.lastManualFxUpdateAt).getTime();
+  if (!Number.isFinite(lastManualUpdate)) return false;
+  return Date.now() - lastManualUpdate < MANUAL_FX_COOLDOWN_MS;
+}
+
+async function requestManualFxUpdate() {
+  if (state.manualFx) {
+    els.fxStatus.textContent = "請先關閉手動匯率模式。";
+    return;
+  }
+
+  if (!navigator.onLine) {
+    updateFxStatus();
+    return;
+  }
+
+  if (manualFxCooldownActive()) {
+    els.fxStatus.textContent = "剛剛已更新匯率，請稍後再試。";
+    return;
+  }
+
+  state.lastManualFxUpdateAt = new Date().toISOString();
+  saveState();
+  await fetchRates(true);
 }
 
 function shouldAutoUpdateFx() {
@@ -392,7 +424,7 @@ function bindEvents() {
     });
   });
 
-  els.updateRatesBtn.addEventListener("click", () => fetchRates(true));
+  els.updateRatesBtn.addEventListener("click", () => requestManualFxUpdate());
 
   els.resetBtn.addEventListener("click", () => {
     if (!confirm("確定要重設所有已儲存資料？")) return;
