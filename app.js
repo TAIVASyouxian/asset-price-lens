@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.5";
+const APP_VERSION = "v1.0.7";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 
@@ -7,6 +7,7 @@ const defaults = {
   productCurrency: "TWD",
   decimalMode: "2",
   manualFx: false,
+  autoDailyFxUpdate: true,
   prices: {
     price0050: 180,
     priceVT: 120,
@@ -15,6 +16,7 @@ const defaults = {
   fx: {
     usdTwd: "",
     eurTwd: "",
+    chfTwd: "",
     source: "",
     fetchedAt: "",
     rateDate: ""
@@ -37,8 +39,11 @@ const els = {
   priceVT: document.querySelector("#priceVT"),
   priceEWL: document.querySelector("#priceEWL"),
   manualFxMode: document.querySelector("#manualFxMode"),
+  autoDailyFxUpdate: document.querySelector("#autoDailyFxUpdate"),
   usdTwd: document.querySelector("#usdTwd"),
   eurTwd: document.querySelector("#eurTwd"),
+  chfTwd: document.querySelector("#chfTwd"),
+  lastFxUpdate: document.querySelector("#lastFxUpdate"),
   decimalMode: document.querySelector("#decimalMode"),
   installmentMonths: document.querySelector("#installmentMonths"),
   monthlyPayment: document.querySelector("#monthlyPayment"),
@@ -105,23 +110,31 @@ function formatShares(value) {
 }
 
 function todayKey(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+  const pad = (part) => String(part).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 function readableDateTime(value) {
   if (!value) return "未知時間";
-  return new Intl.DateTimeFormat("zh-TW", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(value));
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "未知時間";
+  const pad = (part) => String(part).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-function isFxFromToday() {
+function hasTodayFx() {
+  if (state.fx.rateDate === todayKey()) return true;
   return state.fx.fetchedAt && todayKey(new Date(state.fx.fetchedAt)) === todayKey();
 }
 
 function hasSavedFx() {
-  return numberValue(state.fx.usdTwd) && numberValue(state.fx.eurTwd);
+  return numberValue(state.fx.usdTwd) && numberValue(state.fx.eurTwd) && numberValue(state.fx.chfTwd);
+}
+
+function updateLastFxLabel() {
+  els.lastFxUpdate.textContent = state.fx.fetchedAt
+    ? `上次匯率更新：${readableDateTime(state.fx.fetchedAt)}`
+    : "尚未更新匯率";
 }
 
 function syncInputs() {
@@ -131,8 +144,11 @@ function syncInputs() {
   els.priceVT.value = state.prices.priceVT;
   els.priceEWL.value = state.prices.priceEWL;
   els.manualFxMode.checked = Boolean(state.manualFx);
+  els.autoDailyFxUpdate.checked = Boolean(state.autoDailyFxUpdate);
   els.usdTwd.value = state.fx.usdTwd;
   els.eurTwd.value = state.fx.eurTwd;
+  els.chfTwd.value = state.fx.chfTwd;
+  updateLastFxLabel();
   els.updateRatesBtn.disabled = Boolean(state.manualFx);
   els.decimalMode.value = state.decimalMode;
   els.installmentMonths.value = state.installmentMonths;
@@ -151,34 +167,31 @@ function updateCurrencyButtons() {
 
 function updateFxStatus(mode = "") {
   if (state.manualFx) {
-    els.fxStatus.textContent = hasSavedFx()
-      ? "手動匯率模式：使用手動輸入匯率"
-      : "手動匯率模式：請輸入 USD/TWD 與 EUR/TWD";
+    els.fxStatus.textContent = "手動匯率模式已開啟，不會自動更新。";
     return;
   }
 
   if (!hasSavedFx()) {
-    els.fxStatus.textContent = "沒有已儲存匯率，請手動輸入";
+    els.fxStatus.textContent = "沒有已儲存匯率，請手動輸入。";
     return;
   }
 
-  const savedAt = readableDateTime(state.fx.fetchedAt);
   if (!navigator.onLine) {
-    els.fxStatus.textContent = `離線：使用已儲存匯率 ${savedAt}`;
+    els.fxStatus.textContent = "離線：使用已儲存匯率。";
     return;
   }
 
   if (mode === "api-failed") {
-    els.fxStatus.textContent = `匯率來源暫時無法使用：使用已儲存匯率 ${savedAt}`;
+    els.fxStatus.textContent = "匯率來源暫時無法使用：使用已儲存匯率。";
     return;
   }
 
-  els.fxStatus.textContent = "線上：使用最新每日匯率";
+  els.fxStatus.textContent = hasTodayFx() ? "已使用今日匯率" : "線上：使用最新每日匯率";
 }
 
 async function fetchRates(force = false) {
   if (state.manualFx) {
-    updateFxStatus();
+    els.fxStatus.textContent = force ? "請先關閉手動匯率模式。" : "手動匯率模式已開啟，不會自動更新。";
     return;
   }
 
@@ -187,8 +200,8 @@ async function fetchRates(force = false) {
     return;
   }
 
-  if (!force && isFxFromToday() && hasSavedFx()) {
-    updateFxStatus();
+  if (!force && hasTodayFx() && hasSavedFx()) {
+    els.fxStatus.textContent = "已使用今日匯率";
     return;
   }
 
@@ -201,27 +214,43 @@ async function fetchRates(force = false) {
     const data = await response.json();
     const usdTwd = Number(data?.rates?.TWD);
     const usdEur = Number(data?.rates?.EUR);
-    if (!usdTwd || !usdEur) throw new Error("Required rates missing");
+    const usdChf = Number(data?.rates?.CHF);
+    if (!usdTwd || !usdEur || !usdChf) throw new Error("Required rates missing");
 
     state.fx = {
       usdTwd: Number(usdTwd.toFixed(4)),
       eurTwd: Number((usdTwd / usdEur).toFixed(4)),
+      chfTwd: Number((usdTwd / usdChf).toFixed(4)),
       source: "open.er-api.com",
       fetchedAt: new Date().toISOString(),
-      rateDate: data.time_last_update_utc || data.time_last_update_unix || todayKey()
+      rateDate: todayKey()
     };
 
     saveState();
     syncInputs();
+    els.fxStatus.textContent = "線上：使用最新每日匯率";
   } catch {
     updateFxStatus(hasSavedFx() ? "api-failed" : "");
   }
+}
+
+function shouldAutoUpdateFx() {
+  return navigator.onLine && !state.manualFx && state.autoDailyFxUpdate && (!hasTodayFx() || !hasSavedFx());
+}
+
+function startFxUpdateFlow() {
+  if (shouldAutoUpdateFx()) {
+    fetchRates(false);
+    return;
+  }
+  updateFxStatus();
 }
 
 function productPriceTwd() {
   const amount = numberValue(state.productPrice);
   if (state.productCurrency === "USD") return amount * numberValue(state.fx.usdTwd);
   if (state.productCurrency === "EUR") return amount * numberValue(state.fx.eurTwd);
+  if (state.productCurrency === "CHF") return amount * numberValue(state.fx.chfTwd);
   return amount;
 }
 
@@ -257,6 +286,7 @@ function bindInput(input, update) {
     update(input.value);
     saveState();
     updateFxStatus();
+    updateLastFxLabel();
     calculate();
   });
 }
@@ -275,8 +305,12 @@ function bindEvents() {
     }
     saveState();
     syncInputs();
-    updateFxStatus();
-    if (!state.manualFx) fetchRates(false);
+    if (!state.manualFx) startFxUpdateFlow();
+  });
+  els.autoDailyFxUpdate.addEventListener("change", () => {
+    state.autoDailyFxUpdate = els.autoDailyFxUpdate.checked;
+    saveState();
+    startFxUpdateFlow();
   });
   bindInput(els.usdTwd, (value) => {
     state.fx.usdTwd = value;
@@ -286,6 +320,12 @@ function bindEvents() {
   });
   bindInput(els.eurTwd, (value) => {
     state.fx.eurTwd = value;
+    state.fx.source = "manual";
+    state.fx.fetchedAt = new Date().toISOString();
+    state.fx.rateDate = todayKey();
+  });
+  bindInput(els.chfTwd, (value) => {
+    state.fx.chfTwd = value;
     state.fx.source = "manual";
     state.fx.fetchedAt = new Date().toISOString();
     state.fx.rateDate = todayKey();
@@ -336,7 +376,7 @@ function bindEvents() {
     window.location.replace(url.toString());
   });
 
-  window.addEventListener("online", () => fetchRates(false));
+  window.addEventListener("online", () => startFxUpdateFlow());
   window.addEventListener("offline", () => updateFxStatus());
 }
 
@@ -351,5 +391,5 @@ async function registerServiceWorker() {
 
 bindEvents();
 syncInputs();
-fetchRates(false);
+startFxUpdateFlow();
 registerServiceWorker();

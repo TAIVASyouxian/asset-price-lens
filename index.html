@@ -17,7 +17,7 @@
           <p class="eyebrow">價格換算成 ETF 股數</p>
           <h1>資產尺</h1>
         </div>
-        <span class="version" id="appVersion">v1.0.5</span>
+        <span class="version" id="appVersion">v1.0.7</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -31,10 +31,12 @@
           <input id="productPrice" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0">
         </label>
 
-        <div class="segmented" role="group" aria-label="Product currency">
-          <button type="button" data-currency="TWD">TWD</button>
-          <button type="button" data-currency="USD">USD</button>
-          <button type="button" data-currency="EUR">EUR</button>
+        <p class="selector-label">選擇商品幣別</p>
+        <div class="segmented" role="group" aria-label="商品幣別">
+          <button type="button" data-currency="TWD">💲 TWD</button>
+          <button type="button" data-currency="USD">💵 USD</button>
+          <button type="button" data-currency="EUR">💶 EUR</button>
+          <button type="button" data-currency="CHF">🇨🇭 CHF</button>
         </div>
 
         <div class="quick-row">
@@ -66,6 +68,7 @@
           <h2 id="settings-heading">設定</h2>
           <p>ETF 價格為手動輸入估算值。</p>
         </div>
+        <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>
 
         <div class="form-grid">
           <label class="field" for="price0050">
@@ -90,6 +93,13 @@
             </span>
             <input id="manualFxMode" type="checkbox">
           </label>
+          <label class="toggle-field" for="autoDailyFxUpdate">
+            <span>
+              <strong>每日自動更新匯率</strong>
+              <small>開啟後，每天第一次開啟 App 時會自動更新匯率。</small>
+            </span>
+            <input id="autoDailyFxUpdate" type="checkbox">
+          </label>
           <label class="field" for="usdTwd">
             <span>USD/TWD</span>
             <input id="usdTwd" inputmode="decimal" type="number" min="0" step="0.0001">
@@ -98,6 +108,14 @@
             <span>EUR/TWD</span>
             <input id="eurTwd" inputmode="decimal" type="number" min="0" step="0.0001">
           </label>
+          <label class="field" for="chfTwd">
+            <span>CHF/TWD</span>
+            <input id="chfTwd" inputmode="decimal" type="number" min="0" step="0.0001">
+          </label>
+          <div class="summary-box compact-summary">
+            <span>匯率狀態</span>
+            <strong id="lastFxUpdate">尚未更新匯率</strong>
+          </div>
           <label class="field" for="decimalMode">
             <span>顯示模式</span>
             <select id="decimalMode">

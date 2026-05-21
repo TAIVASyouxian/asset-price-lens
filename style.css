@@ -238,9 +238,15 @@ select:focus {
   line-height: 1;
 }
 
+.selector-label {
+  margin: 12px 0 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .segmented {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin: 12px 0;
 }
@@ -253,6 +259,12 @@ select:focus {
   border-radius: 8px;
   color: var(--text);
   background: #12202a;
+}
+
+.segmented button {
+  padding: 0 6px;
+  white-space: nowrap;
+  font-size: 0.86rem;
 }
 
 .segmented button.active {
@@ -339,6 +351,20 @@ select:focus {
   display: grid;
   gap: 6px;
   min-height: 88px;
+}
+
+.settings-note {
+  margin: -4px 0 12px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.compact-summary {
+  min-height: 72px;
+}
+
+.compact-summary strong {
+  font-size: 0.95rem;
 }
 
 .summary-box strong {
