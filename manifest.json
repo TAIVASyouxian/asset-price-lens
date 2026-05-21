@@ -1,6 +1,6 @@
 {
-  "name": "Asset Price Lens",
-  "short_name": "Price Lens",
+  "name": "資產尺",
+  "short_name": "資產尺",
   "description": "Personal ETF share equivalent calculator.",
   "start_url": "./index.html",
   "scope": "./",
