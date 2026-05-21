@@ -17,7 +17,7 @@
           <p class="eyebrow">價格換算成 ETF 股數</p>
           <h1>資產尺</h1>
         </div>
-        <span class="version" id="appVersion">v1.0.7</span>
+        <span class="version" id="appVersion">v1.0.8</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -61,6 +61,11 @@
           <strong id="sharesEWL">0</strong>
           <small>股</small>
         </article>
+        <article class="result-card tsmc-card">
+          <span>台積電</span>
+          <strong id="sharesTSMC">請先輸入台積電股價</strong>
+          <small id="sharesTSMCNote">台積電</small>
+        </article>
       </section>
 
       <section class="panel" aria-labelledby="settings-heading">
@@ -70,21 +75,30 @@
         </div>
         <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>
 
+        <h3 class="subsection-title">資產價格設定</h3>
+        <p class="settings-note">資產價格需手動輸入；匯率可自動更新。</p>
+        <p class="settings-note">股價越接近當下價格，換算結果越接近實際資產部位。</p>
         <div class="form-grid">
           <label class="field" for="price0050">
-            <span>0050 價格 (TWD)</span>
+            <span>0050 今日價格 (TWD)</span>
             <input id="price0050" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
+          <label class="field" for="priceTSMC">
+            <span>台積電今日價格 (TWD)</span>
+            <input id="priceTSMC" inputmode="decimal" type="number" min="0" step="0.01" placeholder="台積電股價">
+          </label>
           <label class="field" for="priceVT">
-            <span>VT 價格 (USD)</span>
+            <span>VT 今日價格 (USD)</span>
             <input id="priceVT" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
           <label class="field" for="priceEWL">
-            <span>EWL 價格 (USD)</span>
+            <span>EWL 今日價格 (USD)</span>
             <input id="priceEWL" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
         </div>
+        <p class="asset-timestamp" id="lastAssetPriceUpdate">尚未更新資產價格</p>
 
+        <h3 class="subsection-title">匯率設定</h3>
         <div class="form-grid">
           <label class="toggle-field" for="manualFxMode">
             <span>

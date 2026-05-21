@@ -337,6 +337,11 @@ select:focus {
   color: var(--accent-strong);
 }
 
+.result-card.tsmc-card strong {
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
 .result-card small {
   grid-column: 1 / -1;
 }
@@ -356,6 +361,19 @@ select:focus {
 .settings-note {
   margin: -4px 0 12px;
   color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.subsection-title {
+  margin: 18px 0 10px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.asset-timestamp {
+  margin: 10px 0 4px;
+  color: var(--accent-strong);
   font-size: 0.82rem;
 }
 

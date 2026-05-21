@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.7";
+const APP_VERSION = "v1.0.8";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 
@@ -9,9 +9,10 @@ const defaults = {
   manualFx: false,
   autoDailyFxUpdate: true,
   prices: {
-    price0050: 180,
-    priceVT: 120,
-    priceEWL: 50
+    price_0050_twd: 180,
+    price_tsmc_twd: "",
+    price_vt_usd: 120,
+    price_ewl_usd: 50
   },
   fx: {
     usdTwd: "",
@@ -21,6 +22,7 @@ const defaults = {
     fetchedAt: "",
     rateDate: ""
   },
+  assetPricesUpdatedAt: "",
   installmentMonths: "",
   current0050: "",
   target0050: ""
@@ -35,9 +37,13 @@ const els = {
   shares0050: document.querySelector("#shares0050"),
   sharesVT: document.querySelector("#sharesVT"),
   sharesEWL: document.querySelector("#sharesEWL"),
+  sharesTSMC: document.querySelector("#sharesTSMC"),
+  sharesTSMCNote: document.querySelector("#sharesTSMCNote"),
   price0050: document.querySelector("#price0050"),
+  priceTSMC: document.querySelector("#priceTSMC"),
   priceVT: document.querySelector("#priceVT"),
   priceEWL: document.querySelector("#priceEWL"),
+  lastAssetPriceUpdate: document.querySelector("#lastAssetPriceUpdate"),
   manualFxMode: document.querySelector("#manualFxMode"),
   autoDailyFxUpdate: document.querySelector("#autoDailyFxUpdate"),
   usdTwd: document.querySelector("#usdTwd"),
@@ -69,10 +75,18 @@ function loadState() {
 }
 
 function mergeState(base, saved) {
+  const savedPrices = saved.prices || {};
   return {
     ...structuredClone(base),
     ...saved,
-    prices: { ...base.prices, ...(saved.prices || {}) },
+    prices: {
+      ...base.prices,
+      ...savedPrices,
+      price_0050_twd: savedPrices.price_0050_twd ?? savedPrices.price0050 ?? base.prices.price_0050_twd,
+      price_tsmc_twd: savedPrices.price_tsmc_twd ?? base.prices.price_tsmc_twd,
+      price_vt_usd: savedPrices.price_vt_usd ?? savedPrices.priceVT ?? base.prices.price_vt_usd,
+      price_ewl_usd: savedPrices.price_ewl_usd ?? savedPrices.priceEWL ?? base.prices.price_ewl_usd
+    },
     fx: { ...base.fx, ...(saved.fx || {}) }
   };
 }
@@ -137,18 +151,26 @@ function updateLastFxLabel() {
     : "尚未更新匯率";
 }
 
+function updateLastAssetPriceLabel() {
+  els.lastAssetPriceUpdate.textContent = state.assetPricesUpdatedAt
+    ? `上次資產價格更新：${readableDateTime(state.assetPricesUpdatedAt)}`
+    : "尚未更新資產價格";
+}
+
 function syncInputs() {
   els.appVersion.textContent = APP_VERSION;
   els.productPrice.value = state.productPrice;
-  els.price0050.value = state.prices.price0050;
-  els.priceVT.value = state.prices.priceVT;
-  els.priceEWL.value = state.prices.priceEWL;
+  els.price0050.value = state.prices.price_0050_twd;
+  els.priceTSMC.value = state.prices.price_tsmc_twd;
+  els.priceVT.value = state.prices.price_vt_usd;
+  els.priceEWL.value = state.prices.price_ewl_usd;
   els.manualFxMode.checked = Boolean(state.manualFx);
   els.autoDailyFxUpdate.checked = Boolean(state.autoDailyFxUpdate);
   els.usdTwd.value = state.fx.usdTwd;
   els.eurTwd.value = state.fx.eurTwd;
   els.chfTwd.value = state.fx.chfTwd;
   updateLastFxLabel();
+  updateLastAssetPriceLabel();
   els.updateRatesBtn.disabled = Boolean(state.manualFx);
   els.decimalMode.value = state.decimalMode;
   els.installmentMonths.value = state.installmentMonths;
@@ -257,10 +279,12 @@ function productPriceTwd() {
 function calculate() {
   const priceTwd = productPriceTwd();
   const usdTwd = numberValue(state.fx.usdTwd);
-  const price0050 = numberValue(state.prices.price0050);
-  const priceVT = numberValue(state.prices.priceVT) * usdTwd;
-  const priceEWL = numberValue(state.prices.priceEWL) * usdTwd;
+  const price0050 = numberValue(state.prices.price_0050_twd);
+  const priceTSMC = numberValue(state.prices.price_tsmc_twd);
+  const priceVT = numberValue(state.prices.price_vt_usd) * usdTwd;
+  const priceEWL = numberValue(state.prices.price_ewl_usd) * usdTwd;
   const shares0050 = price0050 ? priceTwd / price0050 : 0;
+  const sharesTSMC = priceTSMC ? priceTwd / priceTSMC : 0;
   const sharesVT = priceVT ? priceTwd / priceVT : 0;
   const sharesEWL = priceEWL ? priceTwd / priceEWL : 0;
 
@@ -268,6 +292,13 @@ function calculate() {
   els.shares0050.textContent = formatShares(shares0050);
   els.sharesVT.textContent = formatShares(sharesVT);
   els.sharesEWL.textContent = formatShares(sharesEWL);
+  if (priceTSMC) {
+    els.sharesTSMC.textContent = `約等於 ${formatShares(sharesTSMC)} 股台積電`;
+    els.sharesTSMCNote.textContent = "台積電";
+  } else {
+    els.sharesTSMC.textContent = "請先輸入台積電股價";
+    els.sharesTSMCNote.textContent = "台積電股價";
+  }
 
   const months = Math.max(0, Math.floor(numberValue(state.installmentMonths)));
   const monthly = months ? priceTwd / months : 0;
@@ -291,11 +322,23 @@ function bindInput(input, update) {
   });
 }
 
+function bindAssetPriceInput(input, update) {
+  input.addEventListener("input", () => {
+    update(input.value);
+    state.assetPricesUpdatedAt = new Date().toISOString();
+    saveState();
+    updateLastAssetPriceLabel();
+    updateFxStatus();
+    calculate();
+  });
+}
+
 function bindEvents() {
   bindInput(els.productPrice, (value) => { state.productPrice = value; });
-  bindInput(els.price0050, (value) => { state.prices.price0050 = value; });
-  bindInput(els.priceVT, (value) => { state.prices.priceVT = value; });
-  bindInput(els.priceEWL, (value) => { state.prices.priceEWL = value; });
+  bindAssetPriceInput(els.price0050, (value) => { state.prices.price_0050_twd = value; });
+  bindAssetPriceInput(els.priceTSMC, (value) => { state.prices.price_tsmc_twd = value; });
+  bindAssetPriceInput(els.priceVT, (value) => { state.prices.price_vt_usd = value; });
+  bindAssetPriceInput(els.priceEWL, (value) => { state.prices.price_ewl_usd = value; });
   els.manualFxMode.addEventListener("change", () => {
     state.manualFx = els.manualFxMode.checked;
     if (state.manualFx && hasSavedFx()) {
