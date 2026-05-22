@@ -1,5 +1,7 @@
-const APP_VERSION = "v1.0.11";
+const APP_VERSION = "v1.0.12";
 const STORAGE_KEY = "assetPriceLensState";
+const ACCESS_GRANTED_KEY = "accessGranted";
+const ACCESS_CODE = "TAIVAS-GJ";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
 
@@ -39,6 +41,11 @@ const defaults = {
 };
 
 const els = {
+  accessGate: document.querySelector("#accessGate"),
+  appShell: document.querySelector("#appShell"),
+  accessCode: document.querySelector("#accessCode"),
+  accessSubmit: document.querySelector("#accessSubmit"),
+  accessError: document.querySelector("#accessError"),
   appVersion: document.querySelector("#appVersion"),
   productPrice: document.querySelector("#productPrice"),
   convertedPrice: document.querySelector("#convertedPrice"),
@@ -70,10 +77,31 @@ const els = {
   purchaseDelay: document.querySelector("#purchaseDelay"),
   resetBtn: document.querySelector("#resetBtn"),
   reloadAppBtn: document.querySelector("#reloadAppBtn"),
+  clearAccessBtn: document.querySelector("#clearAccessBtn"),
   currencyButtons: [...document.querySelectorAll("[data-currency]")]
 };
 
 let state = loadState();
+
+function hasAccess() {
+  return localStorage.getItem(ACCESS_GRANTED_KEY) === "true";
+}
+
+function renderAccessState() {
+  const granted = hasAccess();
+  els.accessGate.hidden = granted;
+  els.appShell.classList.toggle("access-locked", !granted);
+  if (!granted) {
+    window.setTimeout(() => els.accessCode.focus(), 0);
+  }
+}
+
+function grantAccess() {
+  localStorage.setItem(ACCESS_GRANTED_KEY, "true");
+  els.accessError.textContent = "";
+  els.accessCode.value = "";
+  renderAccessState();
+}
 
 function loadState() {
   try {
@@ -374,6 +402,20 @@ function bindAssetPriceInput(input, update) {
 }
 
 function bindEvents() {
+  els.accessSubmit.addEventListener("click", () => {
+    if (els.accessCode.value.trim() === ACCESS_CODE) {
+      grantAccess();
+      return;
+    }
+    els.accessError.textContent = "測試碼錯誤，請確認後再試。";
+  });
+
+  els.accessCode.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      els.accessSubmit.click();
+    }
+  });
+
   bindInput(els.productPrice, (value) => { state.productPrice = value; });
   bindAssetPriceInput(els.price0050, (value) => { state.prices.price_0050_twd = value; });
   bindAssetPriceInput(els.priceTSMC, (value) => { state.prices.price_tsmc_twd = value; });
@@ -441,6 +483,11 @@ function bindEvents() {
     syncInputs();
   });
 
+  els.clearAccessBtn.addEventListener("click", () => {
+    localStorage.removeItem(ACCESS_GRANTED_KEY);
+    renderAccessState();
+  });
+
   els.reloadAppBtn.addEventListener("click", async () => {
     if ("serviceWorker" in navigator) {
       const registrations = await navigator.serviceWorker.getRegistrations();
@@ -474,5 +521,6 @@ async function registerServiceWorker() {
 
 bindEvents();
 syncInputs();
+renderAccessState();
 startFxUpdateFlow();
 registerServiceWorker();

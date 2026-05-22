@@ -11,14 +11,29 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <main class="app-shell">
+    <section class="access-gate" id="accessGate" aria-labelledby="accessTitle">
+      <div class="access-card">
+        <p class="eyebrow">資產尺</p>
+        <h1 id="accessTitle">私人測試版</h1>
+        <p>此工具目前僅供受邀測試者使用。</p>
+        <label class="field" for="accessCode">
+          <span>測試碼</span>
+          <input id="accessCode" type="password" autocomplete="off" inputmode="text">
+        </label>
+        <button type="button" class="secondary-button access-button" id="accessSubmit">進入資產尺</button>
+        <p class="access-error" id="accessError" role="alert"></p>
+        <small>這是個人用途的輕量測試入口，不是安全驗證或正式登入系統。</small>
+      </div>
+    </section>
+
+    <main class="app-shell access-locked" id="appShell">
       <header class="app-header">
         <div>
           <p class="eyebrow">價格換算成 ETF 股數</p>
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.11</span>
+        <span class="version" id="appVersion">v1.0.12</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -77,6 +92,7 @@
         <p class="settings-note">資產尺是消費前的資產價值感測工具，用來幫助理解支出的機會成本，不是正式財務決策系統。</p>
         <p class="settings-note">匯率可自動更新；資產價格需手動輸入，且僅供估算資產價值感，不代表即時交易報價。</p>
         <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>
+        <button type="button" class="secondary-button small-action" id="clearAccessBtn">清除測試授權</button>
 
         <h3 class="subsection-title">資產價格設定</h3>
         <p class="settings-note">資產價格需手動輸入；匯率可自動更新。</p>

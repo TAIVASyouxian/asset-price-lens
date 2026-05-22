@@ -47,6 +47,53 @@ button {
   padding: max(18px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
 }
 
+.app-shell.access-locked {
+  display: none;
+}
+
+.access-gate {
+  width: min(100%, 520px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: max(26px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+  display: grid;
+  place-items: center;
+}
+
+.access-gate[hidden] {
+  display: none;
+}
+
+.access-card {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  background: rgba(23, 35, 45, 0.96);
+  box-shadow: var(--shadow);
+}
+
+.access-card h1 {
+  margin-bottom: 10px;
+}
+
+.access-card p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.access-button {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.access-error {
+  min-height: 1.4em;
+  margin: 10px 0 6px;
+  color: #ffd4d4;
+  font-size: 0.9rem;
+}
+
 .app-header {
   display: flex;
   align-items: flex-start;
@@ -300,6 +347,11 @@ select:focus {
   padding: 0 14px;
 }
 
+.small-action {
+  min-height: 38px;
+  margin-bottom: 8px;
+}
+
 .secondary-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -487,6 +539,10 @@ footer p {
 
   .panel {
     background: rgba(255, 255, 255, 0.95);
+  }
+
+  .access-card {
+    background: rgba(255, 255, 255, 0.96);
   }
 
   .primary-panel {
