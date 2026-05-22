@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.18";
+const APP_VERSION = "v1.0.19";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const SKIP_BOOT_KEY = "skipBootAnimation";
@@ -71,8 +71,10 @@ const els = {
     document.querySelector("#bootLine1"),
     document.querySelector("#bootLine2"),
     document.querySelector("#bootLine3"),
-    document.querySelector("#bootLine4")
+    document.querySelector("#bootLine4"),
+    document.querySelector("#bootLine5")
   ],
+  bootBottomText: document.querySelector("#bootBottomText"),
   appVersion: document.querySelector("#appVersion"),
   productPrice: document.querySelector("#productPrice"),
   convertedPrice: document.querySelector("#convertedPrice"),
@@ -129,12 +131,14 @@ function setBootContent(mode) {
     ? {
         title: "資產尺控制台啟動中",
         badges: ["LOCAL ACCESS", "PRIVATE NODE", "ASSET SENSOR ONLINE"],
-        lines: ["本機授權確認…", "匯率節點待命…", "資產感測模組同步…", "私人控制台準備完成"]
+        lines: ["本機授權確認… OK", "匯率節點待命… OK", "資產感測模組同步… OK", "私人控制台準備完成… OK"],
+        bottom: "SYSTEM ONLINE\nWELCOME BACK, EDWARD."
       }
     : {
         title: "權限通過",
         badges: ["ACCESS GRANTED", "PRIVATE NODE", "LOCAL MODE", "ASSET SENSOR ONLINE"],
-        lines: ["私人資產感測模組啟動中…", "匯率節點同步中…", "本機設定載入中…", "資產尺控制台準備完成"]
+        lines: ["本機授權確認中…", "私人資產感測模組啟動中…", "匯率節點同步中…", "本機設定載入中…", "資產尺控制台準備完成"],
+        bottom: ""
       };
 
   els.bootTitle.textContent = copy.title;
@@ -143,14 +147,17 @@ function setBootContent(mode) {
     badge.textContent = copy.badges[index] || "";
   });
   els.bootLines.forEach((line, index) => {
-    line.textContent = copy.lines[index] || "";
+    const text = copy.lines[index] || "";
+    line.hidden = !text;
+    line.textContent = text;
   });
+  els.bootBottomText.textContent = copy.bottom;
 }
 
 function unlockApp() {
   els.accessGate.hidden = true;
   els.bootScreen.hidden = true;
-  els.bootScreen.classList.remove("boot-active");
+  els.bootScreen.classList.remove("boot-active", "boot-first", "boot-returning");
   els.appShell.classList.remove("access-locked");
 }
 
@@ -160,14 +167,14 @@ function showBootSequence(mode, onComplete = () => {}) {
   els.accessGate.hidden = true;
   els.appShell.classList.add("access-locked");
   els.bootScreen.hidden = false;
-  els.bootScreen.classList.remove("boot-active");
+  els.bootScreen.classList.remove("boot-active", "boot-first", "boot-returning");
   void els.bootScreen.offsetWidth;
-  els.bootScreen.classList.add("boot-active");
+  els.bootScreen.classList.add("boot-active", mode === "returning" ? "boot-returning" : "boot-first");
 
-  const duration = prefersReducedMotion() ? 450 : mode === "returning" ? 1400 : 1750;
+  const duration = prefersReducedMotion() ? 500 : mode === "returning" ? 2300 : 3000;
   window.setTimeout(() => {
     els.bootScreen.hidden = true;
-    els.bootScreen.classList.remove("boot-active");
+    els.bootScreen.classList.remove("boot-active", "boot-first", "boot-returning");
     onComplete();
   }, duration);
 }
@@ -175,7 +182,7 @@ function showBootSequence(mode, onComplete = () => {}) {
 function renderAccessState() {
   if (!hasAccess()) {
     els.bootScreen.hidden = true;
-    els.bootScreen.classList.remove("boot-active");
+    els.bootScreen.classList.remove("boot-active", "boot-first", "boot-returning");
     els.accessGate.hidden = false;
     els.appShell.classList.add("access-locked");
     window.setTimeout(() => els.accessCode.focus(), 0);

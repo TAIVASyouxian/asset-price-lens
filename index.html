@@ -12,20 +12,21 @@
   </head>
   <body>
     <section class="access-gate" id="accessGate" aria-labelledby="accessTitle">
-      <div class="access-card">
+      <div class="access-card hud-card">
         <div class="scan-line" aria-hidden="true"></div>
         <div class="access-topline">
           <span class="status-dot"></span>
           <p class="eyebrow">TAIVAS PRIVATE NODE</p>
           <span>LOCAL ACCESS ONLY</span>
         </div>
+        <div class="access-orbit" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
         <div class="access-icon" aria-hidden="true">⌬</div>
         <h1 id="accessTitle">資產尺｜機密感測入口</h1>
         <p>請輸入測試碼以啟動私人資產感測模組。</p>
-        <div class="access-status-row" aria-hidden="true">
-          <span>SYSTEM CHECK</span>
-          <span>PRIVATE BETA CHANNEL</span>
-        </div>
         <label class="field access-field" for="accessCode">
           <span>ACCESS CODE</span>
           <input id="accessCode" type="password" autocomplete="off" inputmode="text" placeholder="輸入測試碼">
@@ -33,6 +34,19 @@
         <button type="button" class="secondary-button access-button" id="accessSubmit">驗證權限</button>
         <div class="access-progress" id="accessProgress" aria-hidden="true"><span></span></div>
         <p class="access-error" id="accessError" role="alert"></p>
+        <div class="access-status-row" aria-hidden="true">
+          <span>PRIVATE BETA CHANNEL</span>
+          <span>LOCAL ACCESS ONLY</span>
+        </div>
+        <div class="access-check-panel" aria-hidden="true">
+          <span>SYSTEM CHECK</span>
+          <dl>
+            <div><dt>Network</dt><dd class="status-ok">OK</dd></div>
+            <div><dt>Local Storage</dt><dd class="status-ok">OK</dd></div>
+            <div><dt>Sensor Node</dt><dd>STANDBY</dd></div>
+            <div><dt>FX Node</dt><dd>STANDBY</dd></div>
+          </dl>
+        </div>
         <small>私人測試版｜僅供受邀測試者使用</small>
         <small>此入口為個人用途的輕量測試入口，不是正式登入系統。</small>
       </div>
@@ -47,14 +61,22 @@
           <span data-boot-badge>LOCAL MODE</span>
           <span data-boot-badge>ASSET SENSOR ONLINE</span>
         </div>
+        <div class="boot-symbol" aria-hidden="true">
+          <svg viewBox="0 0 120 120" role="img">
+            <path d="M60 9 101 24v31c0 26-16 47-41 56C35 102 19 81 19 55V24L60 9Z"></path>
+            <path d="M38 59l15 15 31-35"></path>
+          </svg>
+        </div>
         <h1 id="bootTitle">權限通過</h1>
         <ul class="boot-lines">
           <li id="bootLine1">私人資產感測模組啟動中…</li>
           <li id="bootLine2">匯率節點同步中…</li>
           <li id="bootLine3">本機設定載入中…</li>
           <li id="bootLine4">資產尺控制台準備完成</li>
+          <li id="bootLine5"></li>
         </ul>
         <div class="boot-progress" aria-hidden="true"><span></span></div>
+        <p class="boot-bottom" id="bootBottomText"></p>
       </div>
     </section>
 
@@ -65,7 +87,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.18</span>
+        <span class="version" id="appVersion">v1.0.19</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
