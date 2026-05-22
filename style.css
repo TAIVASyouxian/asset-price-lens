@@ -215,10 +215,166 @@ button {
   color: var(--accent-strong);
 }
 
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    linear-gradient(rgba(81, 212, 165, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(81, 212, 165, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at center, rgba(81, 212, 165, 0.16), transparent 28rem),
+    #071018;
+  background-size: 30px 30px, 30px 30px, auto, auto;
+}
+
+.boot-screen[hidden] {
+  display: none;
+}
+
+.boot-scan {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(139, 228, 197, 0.26) 50%, transparent 100%);
+  height: 16%;
+  animation: none;
+}
+
+.boot-screen.boot-active .boot-scan {
+  animation: boot-scan 1.7s linear forwards;
+}
+
+@keyframes boot-scan {
+  from {
+    transform: translateY(-120%);
+  }
+  to {
+    transform: translateY(720%);
+  }
+}
+
+.boot-panel {
+  position: relative;
+  width: min(100%, 620px);
+  border: 1px solid rgba(139, 228, 197, 0.35);
+  border-radius: 8px;
+  padding: 22px;
+  background: rgba(10, 17, 24, 0.86);
+  box-shadow: 0 0 48px rgba(81, 212, 165, 0.14), var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.boot-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.boot-badges span {
+  border: 1px solid rgba(139, 228, 197, 0.28);
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--accent-strong);
+  background: rgba(81, 212, 165, 0.07);
+  font-size: 0.68rem;
+}
+
+.boot-panel h1 {
+  margin-bottom: 14px;
+  color: var(--accent-strong);
+  text-shadow: 0 0 18px rgba(81, 212, 165, 0.28);
+}
+
+.boot-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.boot-lines li {
+  margin: 9px 0;
+  color: var(--muted);
+  opacity: 0;
+  transform: translateY(4px);
+  animation: none;
+}
+
+.boot-screen.boot-active .boot-lines li {
+  animation: boot-line 280ms ease forwards;
+}
+
+.boot-lines li:nth-child(1) {
+  animation-delay: 180ms;
+}
+
+.boot-lines li:nth-child(2) {
+  animation-delay: 520ms;
+}
+
+.boot-lines li:nth-child(3) {
+  animation-delay: 860ms;
+}
+
+.boot-lines li:nth-child(4) {
+  animation-delay: 1200ms;
+  color: var(--accent-strong);
+}
+
+@keyframes boot-line {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boot-progress {
+  height: 5px;
+  margin-top: 20px;
+  border-radius: 999px;
+  background: rgba(139, 228, 197, 0.12);
+  overflow: hidden;
+}
+
+.boot-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  animation: none;
+}
+
+.boot-screen.boot-active .boot-progress span {
+  animation: boot-progress 1.7s ease forwards;
+}
+
+@keyframes boot-progress {
+  to {
+    width: 100%;
+  }
+}
+
 .access-card small {
   display: block;
   margin-top: 4px;
   color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line,
+  .status-dot,
+  .boot-scan,
+  .boot-lines li,
+  .boot-progress span {
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+  }
+
+  .access-progress span {
+    transition-duration: 1ms;
+  }
 }
 
 .app-header {

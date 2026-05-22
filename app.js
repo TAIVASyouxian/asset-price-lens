@@ -1,6 +1,7 @@
-const APP_VERSION = "v1.0.15";
+const APP_VERSION = "v1.0.17";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
+const SKIP_BOOT_KEY = "skipBootAnimation";
 const ACCESS_CODE = "TAIVAS-GJ";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
@@ -58,11 +59,20 @@ const defaults = {
 
 const els = {
   accessGate: document.querySelector("#accessGate"),
+  bootScreen: document.querySelector("#bootScreen"),
   appShell: document.querySelector("#appShell"),
   accessCode: document.querySelector("#accessCode"),
   accessSubmit: document.querySelector("#accessSubmit"),
   accessError: document.querySelector("#accessError"),
   accessProgress: document.querySelector("#accessProgress"),
+  bootTitle: document.querySelector("#bootTitle"),
+  bootBadges: [...document.querySelectorAll("[data-boot-badge]")],
+  bootLines: [
+    document.querySelector("#bootLine1"),
+    document.querySelector("#bootLine2"),
+    document.querySelector("#bootLine3"),
+    document.querySelector("#bootLine4")
+  ],
   appVersion: document.querySelector("#appVersion"),
   productPrice: document.querySelector("#productPrice"),
   convertedPrice: document.querySelector("#convertedPrice"),
@@ -95,10 +105,12 @@ const els = {
   resetBtn: document.querySelector("#resetBtn"),
   reloadAppBtn: document.querySelector("#reloadAppBtn"),
   clearAccessBtn: document.querySelector("#clearAccessBtn"),
+  skipBootAnimation: document.querySelector("#skipBootAnimation"),
   currencyButtons: [...document.querySelectorAll("[data-currency]")]
 };
 
 let state = loadState();
+let bootShownThisLoad = false;
 
 function hasAccess() {
   return localStorage.getItem(ACCESS_GRANTED_KEY) === "true";
@@ -117,14 +129,112 @@ function grantAccess() {
   els.accessError.classList.add("success");
   els.accessError.textContent = "權限通過｜資產感測模組啟動中…";
   els.accessProgress.classList.add("active");
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const bootDuration = prefersReducedMotion ? 450 : 1750;
+  window.setTimeout(() => {
+    els.accessGate.hidden = true;
+    els.bootScreen.hidden = false;
+  }, prefersReducedMotion ? 80 : 220);
   window.setTimeout(() => {
     localStorage.setItem(ACCESS_GRANTED_KEY, "true");
     els.accessError.textContent = "";
     els.accessError.classList.remove("success");
     els.accessProgress.classList.remove("active");
     els.accessCode.value = "";
+    els.bootScreen.hidden = true;
     renderAccessState();
-  }, 760);
+  }, bootDuration);
+}
+
+function skipBootEnabled() {
+  return localStorage.getItem(SKIP_BOOT_KEY) === "true";
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function setBootContent(mode) {
+  const copy = mode === "returning"
+    ? {
+        title: "資產尺控制台啟動中",
+        badges: ["LOCAL ACCESS", "PRIVATE NODE", "ASSET SENSOR ONLINE"],
+        lines: ["本機授權確認…", "匯率節點待命…", "資產感測模組同步…", "私人控制台準備完成"]
+      }
+    : {
+        title: "權限通過",
+        badges: ["ACCESS GRANTED", "PRIVATE NODE", "LOCAL MODE", "ASSET SENSOR ONLINE"],
+        lines: ["私人資產感測模組啟動中…", "匯率節點同步中…", "本機設定載入中…", "資產尺控制台準備完成"]
+      };
+
+  els.bootTitle.textContent = copy.title;
+  els.bootBadges.forEach((badge, index) => {
+    badge.hidden = !copy.badges[index];
+    badge.textContent = copy.badges[index] || "";
+  });
+  els.bootLines.forEach((line, index) => {
+    line.textContent = copy.lines[index] || "";
+  });
+}
+
+function unlockApp() {
+  els.accessGate.hidden = true;
+  els.bootScreen.hidden = true;
+  els.bootScreen.classList.remove("boot-active");
+  els.appShell.classList.remove("access-locked");
+}
+
+function showBootSequence(mode, onComplete = () => {}) {
+  setBootContent(mode);
+  bootShownThisLoad = true;
+  els.accessGate.hidden = true;
+  els.appShell.classList.add("access-locked");
+  els.bootScreen.hidden = false;
+  els.bootScreen.classList.remove("boot-active");
+  void els.bootScreen.offsetWidth;
+  els.bootScreen.classList.add("boot-active");
+
+  const duration = prefersReducedMotion() ? 450 : mode === "returning" ? 1400 : 1750;
+  window.setTimeout(() => {
+    els.bootScreen.hidden = true;
+    els.bootScreen.classList.remove("boot-active");
+    onComplete();
+  }, duration);
+}
+
+function renderAccessState() {
+  if (!hasAccess()) {
+    els.bootScreen.hidden = true;
+    els.bootScreen.classList.remove("boot-active");
+    els.accessGate.hidden = false;
+    els.appShell.classList.add("access-locked");
+    window.setTimeout(() => els.accessCode.focus(), 0);
+    return;
+  }
+
+  if (!skipBootEnabled() && !bootShownThisLoad) {
+    showBootSequence("returning", unlockApp);
+    return;
+  }
+
+  unlockApp();
+}
+
+function grantAccess() {
+  els.accessError.classList.add("success");
+  els.accessError.textContent = "權限通過｜資產感測模組啟動中…";
+  els.accessProgress.classList.add("active");
+
+  window.setTimeout(() => {
+    showBootSequence("first", () => {
+      localStorage.setItem(ACCESS_GRANTED_KEY, "true");
+      els.accessError.textContent = "";
+      els.accessError.classList.remove("success");
+      els.accessProgress.classList.remove("active");
+      els.accessCode.value = "";
+      unlockApp();
+    });
+  }, prefersReducedMotion() ? 80 : 220);
 }
 
 function loadState() {
@@ -228,6 +338,7 @@ function syncInputs() {
   els.priceEWL.value = state.prices.price_ewl_usd;
   els.manualFxMode.checked = Boolean(state.manualFx);
   els.autoDailyFxUpdate.checked = Boolean(state.autoDailyFxUpdate);
+  els.skipBootAnimation.checked = skipBootEnabled();
   els.usdTwd.value = state.fx.usdTwd;
   els.eurTwd.value = state.fx.eurTwd;
   els.chfTwd.value = state.fx.chfTwd;
@@ -506,6 +617,10 @@ function bindEvents() {
     localStorage.removeItem(STORAGE_KEY);
     state = loadState();
     syncInputs();
+  });
+
+  els.skipBootAnimation.addEventListener("change", () => {
+    localStorage.setItem(SKIP_BOOT_KEY, els.skipBootAnimation.checked ? "true" : "false");
   });
 
   els.clearAccessBtn.addEventListener("click", () => {

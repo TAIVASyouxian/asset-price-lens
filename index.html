@@ -38,6 +38,26 @@
       </div>
     </section>
 
+    <section class="boot-screen" id="bootScreen" hidden aria-live="polite" aria-label="Access granted">
+      <div class="boot-scan" aria-hidden="true"></div>
+      <div class="boot-panel">
+        <div class="boot-badges">
+          <span data-boot-badge>ACCESS GRANTED</span>
+          <span data-boot-badge>PRIVATE NODE</span>
+          <span data-boot-badge>LOCAL MODE</span>
+          <span data-boot-badge>ASSET SENSOR ONLINE</span>
+        </div>
+        <h1 id="bootTitle">權限通過</h1>
+        <ul class="boot-lines">
+          <li id="bootLine1">私人資產感測模組啟動中…</li>
+          <li id="bootLine2">匯率節點同步中…</li>
+          <li id="bootLine3">本機設定載入中…</li>
+          <li id="bootLine4">資產尺控制台準備完成</li>
+        </ul>
+        <div class="boot-progress" aria-hidden="true"><span></span></div>
+      </div>
+    </section>
+
     <main class="app-shell access-locked" id="appShell">
       <header class="app-header">
         <div>
@@ -45,7 +65,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.15</span>
+        <span class="version" id="appVersion">v1.0.17</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -106,6 +126,13 @@
         <p class="settings-note">匯率可自動更新；資產價格需手動輸入，且僅供估算資產價值感，不代表即時交易報價。</p>
         <p class="settings-note">產品邊界：本工具不是券商 App、交易工具、投資建議工具、股票報價工具、理財推薦工具或正式財務規劃系統。</p>
         <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>
+        <label class="toggle-field compact-toggle" for="skipBootAnimation">
+          <span>
+            <strong>略過啟動畫面</strong>
+            <small>開啟後，已授權時會直接進入主畫面。</small>
+          </span>
+          <input id="skipBootAnimation" type="checkbox">
+        </label>
         <button type="button" class="secondary-button small-action" id="clearAccessBtn">清除測試授權</button>
 
         <h3 class="subsection-title">資產價格設定</h3>
