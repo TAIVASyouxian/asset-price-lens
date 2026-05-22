@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.12";
+const APP_VERSION = "v1.0.13";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const ACCESS_CODE = "TAIVAS-GJ";
@@ -6,11 +6,23 @@ const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
 
 /*
-Product boundary: 資產尺 is a private beta, personal-use estimation tool for
-sensing the asset-value feeling and opportunity cost of a purchase. FX reference
-rates may auto-update, but asset prices must remain manually entered. Do not add
-stock, ETF, brokerage, trading, buy/sell signal, investment advice, or real-time
-quote features unless the product boundary is explicitly changed by the user.
+Product boundary lock:
+- 資產尺 is a private personal-use estimation PWA and consumer-side asset-value
+  sensing tool for estimating the opportunity cost of a purchase.
+- Always describe it as: 消費前的資產價值感測工具.
+- It is not a brokerage app, stock trading app, investment advisory app,
+  buy/sell signal tool, real-time financial quote system, replacement for bank /
+  broker / exchange / official market data, or enterprise financial decision
+  system.
+- FX rates may auto-update only as daily/reference rates for estimation.
+- Asset prices, including 0050, 台積電, VT, EWL, and future custom assets, must
+  remain manually entered by the user.
+- Do not auto-fetch or scrape stock, ETF, quote, brokerage, exchange, or market
+  data. Do not add trading APIs, buy/sell recommendations, portfolio advice,
+  investment scoring, official financial data redistribution, or paid advisory
+  functions unless the user explicitly changes this product boundary later.
+- Prefer wording such as 約相當於, 估算, 參考, 資產價值感, 消費前感測,
+  機會成本, 手動輸入, 參考匯率.
 */
 
 const defaults = {
