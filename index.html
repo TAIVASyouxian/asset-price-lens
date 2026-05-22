@@ -17,7 +17,7 @@
           <p class="eyebrow">價格換算成 ETF 股數</p>
           <h1>資產尺</h1>
         </div>
-        <span class="version" id="appVersion">v1.0.9</span>
+        <span class="version" id="appVersion">v1.0.10</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -73,6 +73,8 @@
           <h2 id="settings-heading">設定</h2>
           <p>ETF 價格為手動輸入估算值。</p>
         </div>
+        <p class="settings-note">資產尺是個人消費前的資產價值感測工具，用來估算購買前的機會成本參考。</p>
+        <p class="settings-note">匯率可自動更新；資產價格需手動輸入，且僅供估算資產價值感，不代表即時交易報價。</p>
         <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>
 
         <h3 class="subsection-title">資產價格設定</h3>
@@ -96,11 +98,11 @@
             <input id="priceEWL" inputmode="decimal" type="number" min="0" step="0.01">
           </label>
         </div>
-        <p class="asset-timestamp" id="lastAssetPriceUpdate">尚未更新資產價格</p>
+        <p class="asset-timestamp" id="lastAssetPriceUpdate">尚未手動更新資產價格</p>
 
-        <h3 class="subsection-title">匯率設定</h3>
-        <p class="settings-note">每日自動更新：每天第一次開啟時更新一次；如需重新抓取，可手動按『更新匯率』。</p>
-        <p class="settings-note">手動更新匯率每 5 分鐘最多一次，避免過度請求匯率來源。</p>
+        <h3 class="subsection-title">參考匯率設定</h3>
+        <p class="settings-note">每日自動更新：每天第一次開啟時更新一次參考匯率；如需重新抓取，可手動按『更新匯率』。</p>
+        <p class="settings-note">手動更新參考匯率每 5 分鐘最多一次，避免過度請求匯率來源。</p>
         <div class="form-grid">
           <label class="toggle-field" for="manualFxMode">
             <span>
@@ -169,7 +171,7 @@
           <div class="summary-box">
             <span>目標進度</span>
             <strong id="sharesRemaining">剩餘 0 股</strong>
-            <small id="purchaseDelay">本次消費約等於 0 股 0050</small>
+            <small id="purchaseDelay">本次消費約相當於 0 股 0050</small>
           </div>
         </div>
       </section>
@@ -226,7 +228,8 @@
       </section>
 
       <footer>
-        <p>本工具僅供個人估算使用。匯率與 ETF 價格僅供約略換算，不構成投資建議、交易訊號、金融建議或保證市場資料。做出金融或消費決策前，請自行確認實際價格。</p>
+        <p>資產尺是個人消費前的資產價值感測工具。匯率可自動更新；資產價格需手動輸入，且僅供估算資產價值感，不代表即時交易報價。本工具不構成投資建議或交易訊號。</p>
+        <p>本工具僅供個人估算使用，不構成投資建議、交易訊號、金融建議或任何保證資料。實際消費、換匯或投資決策前，請自行確認最新價格與匯率。</p>
       </footer>
     </main>
 

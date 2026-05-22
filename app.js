@@ -1,7 +1,15 @@
-const APP_VERSION = "v1.0.9";
+const APP_VERSION = "v1.0.10";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
+
+/*
+Product boundary: 資產尺 is a personal-use estimation tool for sensing the
+asset-value feeling and opportunity cost of a purchase. FX reference rates may
+auto-update, but asset prices must remain manually entered. Do not add stock,
+ETF, brokerage, trading, buy/sell signal, investment advice, or real-time quote
+features unless the product boundary is explicitly changed by the user.
+*/
 
 const defaults = {
   productPrice: "",
@@ -155,8 +163,8 @@ function updateLastFxLabel() {
 
 function updateLastAssetPriceLabel() {
   els.lastAssetPriceUpdate.textContent = state.assetPricesUpdatedAt
-    ? `上次資產價格更新：${readableDateTime(state.assetPricesUpdatedAt)}`
-    : "尚未更新資產價格";
+    ? `上次手動更新資產價格時間：${readableDateTime(state.assetPricesUpdatedAt)}`
+    : "尚未手動更新資產價格";
 }
 
 function syncInputs() {
@@ -191,31 +199,31 @@ function updateCurrencyButtons() {
 
 function updateFxStatus(mode = "") {
   if (state.manualFx) {
-    els.fxStatus.textContent = "手動匯率模式已開啟，不會自動更新。";
+    els.fxStatus.textContent = "手動匯率模式已開啟，不會自動更新參考匯率。";
     return;
   }
 
   if (!hasSavedFx()) {
-    els.fxStatus.textContent = "沒有已儲存匯率，請手動輸入。";
+    els.fxStatus.textContent = "沒有已儲存參考匯率，請手動輸入。";
     return;
   }
 
   if (!navigator.onLine) {
-    els.fxStatus.textContent = "離線：使用已儲存匯率。";
+    els.fxStatus.textContent = "離線：使用已儲存參考匯率。";
     return;
   }
 
   if (mode === "api-failed") {
-    els.fxStatus.textContent = "匯率來源暫時無法使用：使用已儲存匯率。";
+    els.fxStatus.textContent = "匯率來源暫時無法使用：使用已儲存參考匯率。";
     return;
   }
 
-  els.fxStatus.textContent = hasTodayFx() ? "已使用今日匯率" : "線上：使用最新每日匯率";
+  els.fxStatus.textContent = hasTodayFx() ? "已使用今日參考匯率" : "線上：使用最新每日參考匯率";
 }
 
 async function fetchRates(force = false) {
   if (state.manualFx) {
-    els.fxStatus.textContent = force ? "請先關閉手動匯率模式。" : "手動匯率模式已開啟，不會自動更新。";
+    els.fxStatus.textContent = force ? "請先關閉手動匯率模式。" : "手動匯率模式已開啟，不會自動更新參考匯率。";
     return;
   }
 
@@ -225,11 +233,11 @@ async function fetchRates(force = false) {
   }
 
   if (!force && hasTodayFx() && hasSavedFx()) {
-    els.fxStatus.textContent = "已使用今日匯率";
+    els.fxStatus.textContent = "已使用今日參考匯率";
     return;
   }
 
-  els.fxStatus.textContent = "匯率更新中...";
+  els.fxStatus.textContent = "參考匯率更新中...";
 
   try {
     const response = await fetch(FX_API_URL, { cache: "no-store" });
@@ -252,7 +260,7 @@ async function fetchRates(force = false) {
 
     saveState();
     syncInputs();
-    els.fxStatus.textContent = "線上：使用最新每日匯率";
+    els.fxStatus.textContent = "線上：使用最新每日參考匯率";
     return true;
   } catch {
     updateFxStatus(hasSavedFx() ? "api-failed" : "");
@@ -279,7 +287,7 @@ async function requestManualFxUpdate() {
   }
 
   if (manualFxCooldownActive()) {
-    els.fxStatus.textContent = "剛剛已更新匯率，請稍後再試。";
+    els.fxStatus.textContent = "剛剛已更新參考匯率，請稍後再試。";
     return;
   }
 
@@ -325,7 +333,7 @@ function calculate() {
   els.sharesVT.textContent = formatShares(sharesVT);
   els.sharesEWL.textContent = formatShares(sharesEWL);
   if (priceTSMC) {
-    els.sharesTSMC.textContent = `約等於 ${formatShares(sharesTSMC)} 股台積電`;
+    els.sharesTSMC.textContent = `約相當於 ${formatShares(sharesTSMC)} 股台積電`;
     els.sharesTSMCNote.textContent = "台積電";
   } else {
     els.sharesTSMC.textContent = "請先輸入台積電股價";
@@ -341,7 +349,7 @@ function calculate() {
   const target = numberValue(state.target0050);
   const remaining = Math.max(target - current, 0);
   els.sharesRemaining.textContent = `剩餘 ${formatShares(remaining)} 股`;
-  els.purchaseDelay.textContent = `本次消費約等於 ${formatShares(shares0050)} 股 0050`;
+  els.purchaseDelay.textContent = `本次消費約相當於 ${formatShares(shares0050)} 股 0050`;
 }
 
 function bindInput(input, update) {
