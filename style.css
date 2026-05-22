@@ -899,6 +899,11 @@ h2 {
     padding: 15px;
   }
 
+  .horus-front p {
+    width: min(100%, 300px);
+    font-size: 0.95rem;
+  }
+
   .horus-back p,
   .horus-rule span {
     font-size: 0.76rem;
@@ -971,13 +976,19 @@ h2 {
   inset: 0;
   overflow: hidden;
   backface-visibility: hidden;
-  border: 1px solid rgba(213, 179, 93, 0.5);
-  border-radius: 8px;
+  border: 1px solid rgba(214, 171, 88, 0.58);
+  border-radius: 14px;
   padding: 18px;
   background:
-    linear-gradient(135deg, rgba(213, 179, 93, 0.16), transparent 30%),
-    linear-gradient(180deg, rgba(38, 31, 21, 0.94), rgba(8, 14, 22, 0.96));
-  box-shadow: 0 0 28px rgba(25, 217, 255, 0.12), inset 0 0 28px rgba(213, 179, 93, 0.08);
+    radial-gradient(circle at 18% 18%, rgba(245, 217, 148, 0.12), transparent 22%),
+    radial-gradient(circle at 82% 12%, rgba(127, 88, 43, 0.2), transparent 24%),
+    linear-gradient(135deg, rgba(213, 179, 93, 0.2), transparent 30%),
+    linear-gradient(180deg, rgba(54, 43, 28, 0.97), rgba(17, 18, 17, 0.98));
+  box-shadow:
+    0 0 28px rgba(25, 217, 255, 0.12),
+    inset 0 1px 0 rgba(255, 231, 169, 0.12),
+    inset 0 -18px 34px rgba(50, 30, 14, 0.2),
+    inset 0 0 34px rgba(213, 179, 93, 0.1);
 }
 
 .horus-face::before,
@@ -988,9 +999,12 @@ h2 {
 }
 
 .horus-face::before {
-  inset: 10px;
-  border: 1px solid rgba(213, 179, 93, 0.28);
-  border-radius: 6px;
+  inset: 11px;
+  border: 1px solid rgba(213, 179, 93, 0.36);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px rgba(70, 45, 18, 0.42),
+    inset 0 0 28px rgba(0, 0, 0, 0.16);
 }
 
 .horus-face::after {
@@ -1002,16 +1016,18 @@ h2 {
 .horus-front {
   display: grid;
   place-items: center;
-  gap: 10px;
+  gap: 12px;
   min-height: 100%;
   text-align: center;
 }
 
 .horus-front::before {
   background:
-    linear-gradient(90deg, rgba(213, 179, 93, 0.12) 1px, transparent 1px),
-    linear-gradient(rgba(213, 179, 93, 0.1) 1px, transparent 1px);
-  background-size: 18px 18px;
+    radial-gradient(circle, rgba(255, 233, 171, 0.08) 0 1px, transparent 1.8px),
+    linear-gradient(90deg, rgba(213, 179, 93, 0.1) 1px, transparent 1px),
+    linear-gradient(rgba(213, 179, 93, 0.08) 1px, transparent 1px);
+  background-size: 13px 13px, 26px 26px, 26px 26px;
+  opacity: 0.9;
 }
 
 .horus-eye {
@@ -1054,15 +1070,20 @@ h2 {
 .horus-back h4 {
   margin: 0;
   color: #f5d98c;
-  font-size: clamp(1.35rem, 6vw, 2rem);
+  font-size: clamp(1.45rem, 5.4vw, 2.1rem);
   text-shadow: 0 0 18px rgba(213, 179, 93, 0.24);
 }
 
 .horus-front p {
-  max-width: 260px;
+  width: min(100%, 340px);
+  max-width: none;
   margin: 0;
   color: rgba(245, 247, 250, 0.84);
+  font-size: clamp(0.92rem, 2.6vw, 1rem);
   line-height: 1.5;
+  text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .horus-back {

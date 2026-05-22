@@ -1,4 +1,4 @@
-const CACHE_NAME = "asset-price-lens-cache-v1.0.23";
+const CACHE_NAME = "asset-price-lens-cache-v1.0.24";
 const CORE_ASSETS = [
   "./",
   "./index.html",
