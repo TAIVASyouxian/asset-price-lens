@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.25";
+const APP_VERSION = "v1.0.26";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_HISTORY_KEY = "fxRateHistory";
 const ACCESS_GRANTED_KEY = "accessGranted";

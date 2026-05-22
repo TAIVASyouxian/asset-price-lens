@@ -94,7 +94,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.25</span>
+        <span class="version" id="appVersion">v1.0.26</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -136,7 +136,15 @@
         </article>
         <article class="result-card asset-vt">
           <div class="asset-card-head">
-            <span class="asset-icon globe-icon" aria-hidden="true"></span>
+            <span class="asset-icon globe-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" focusable="false">
+                <circle class="globe-outline" cx="20" cy="20" r="12"></circle>
+                <ellipse class="globe-longitude" cx="20" cy="20" rx="5" ry="12"></ellipse>
+                <path class="globe-latitude" d="M9 20h22M12 15c5 2 11 2 16 0M12 25c5-2 11-2 16 0"></path>
+                <path class="globe-orbit" d="M6 24c7 7 22 7 28-1"></path>
+                <circle class="globe-dot" cx="27" cy="14" r="1.8"></circle>
+              </svg>
+            </span>
             <span>VT</span>
           </div>
           <strong id="sharesVT">0</strong>
@@ -144,7 +152,12 @@
         </article>
         <article class="result-card asset-ewl">
           <div class="asset-card-head">
-            <span class="asset-icon swiss-icon" aria-hidden="true"></span>
+            <span class="asset-icon swiss-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" focusable="false">
+                <path class="swiss-shield" d="M20 5 31 9v10c0 8-4.5 13-11 16-6.5-3-11-8-11-16V9l11-4Z"></path>
+                <path class="swiss-cross" d="M17 14h6v5h5v6h-5v5h-6v-5h-5v-6h5v-5Z"></path>
+              </svg>
+            </span>
             <span>EWL</span>
           </div>
           <strong id="sharesEWL">0</strong>
@@ -211,14 +224,27 @@
                 </div>
               </article>
               <article class="calibration-row">
-                <span class="asset-icon globe-icon" aria-hidden="true"></span>
+                <span class="asset-icon globe-icon" aria-hidden="true">
+                  <svg viewBox="0 0 40 40" focusable="false">
+                    <circle class="globe-outline" cx="20" cy="20" r="12"></circle>
+                    <ellipse class="globe-longitude" cx="20" cy="20" rx="5" ry="12"></ellipse>
+                    <path class="globe-latitude" d="M9 20h22M12 15c5 2 11 2 16 0M12 25c5-2 11-2 16 0"></path>
+                    <path class="globe-orbit" d="M6 24c7 7 22 7 28-1"></path>
+                    <circle class="globe-dot" cx="27" cy="14" r="1.8"></circle>
+                  </svg>
+                </span>
                 <div>
                   <h4>VT 今日價格</h4>
                   <p>請填 VT 每股美元價格。例如：155.21 USD</p>
                 </div>
               </article>
               <article class="calibration-row">
-                <span class="asset-icon swiss-icon" aria-hidden="true"></span>
+                <span class="asset-icon swiss-icon" aria-hidden="true">
+                  <svg viewBox="0 0 40 40" focusable="false">
+                    <path class="swiss-shield" d="M20 5 31 9v10c0 8-4.5 13-11 16-6.5-3-11-8-11-16V9l11-4Z"></path>
+                    <path class="swiss-cross" d="M17 14h6v5h5v6h-5v5h-6v-5h-5v-6h5v-5Z"></path>
+                  </svg>
+                </span>
                 <div>
                   <h4>EWL 今日價格</h4>
                   <p>請填 EWL 每股美元價格。例如：62.85 USD</p>
