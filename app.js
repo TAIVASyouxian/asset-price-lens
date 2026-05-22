@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.21";
+const APP_VERSION = "v1.0.22";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_HISTORY_KEY = "fxRateHistory";
 const ACCESS_GRANTED_KEY = "accessGranted";
@@ -103,6 +103,8 @@ const els = {
   fxTrendMinMax: document.querySelector("#fxTrendMinMax"),
   fxTrendChart: document.querySelector("#fxTrendChart"),
   fxTrendEmpty: document.querySelector("#fxTrendEmpty"),
+  horusGuide: document.querySelector("#horusGuide"),
+  horusFlipBack: document.querySelector("#horusFlipBack"),
   decimalMode: document.querySelector("#decimalMode"),
   installmentMonths: document.querySelector("#installmentMonths"),
   monthlyPayment: document.querySelector("#monthlyPayment"),
@@ -641,6 +643,25 @@ function bindEvents() {
     if (event.key === "Enter") {
       els.accessSubmit.click();
     }
+  });
+
+  els.horusGuide.addEventListener("click", () => {
+    const flipped = !els.horusGuide.classList.contains("is-flipped");
+    els.horusGuide.classList.toggle("is-flipped", flipped);
+    els.horusGuide.setAttribute("aria-pressed", String(flipped));
+  });
+
+  els.horusGuide.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      els.horusGuide.click();
+    }
+  });
+
+  els.horusFlipBack.addEventListener("click", (event) => {
+    event.stopPropagation();
+    els.horusGuide.classList.remove("is-flipped");
+    els.horusGuide.setAttribute("aria-pressed", "false");
   });
 
   bindInput(els.productPrice, (value) => { state.productPrice = value; });

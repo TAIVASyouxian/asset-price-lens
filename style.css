@@ -685,6 +685,10 @@ button {
   .access-progress span {
     transition-duration: 1ms;
   }
+
+  .horus-guide-inner {
+    transition-duration: 1ms;
+  }
 }
 
 .app-header {
@@ -883,6 +887,21 @@ h2 {
   .trend-controls {
     grid-template-columns: 1fr;
   }
+
+  .horus-guide-inner,
+  .horus-front,
+  .horus-back {
+    min-height: 430px;
+  }
+
+  .horus-face {
+    padding: 16px;
+  }
+
+  .horus-back p,
+  .horus-rule span {
+    font-size: 0.78rem;
+  }
 }
 
 .field,
@@ -898,6 +917,12 @@ h2 {
   font-size: 0.82rem;
 }
 
+.field-helper {
+  color: rgba(213, 179, 93, 0.88);
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
 .toggle-field {
   min-height: 72px;
   grid-template-columns: 1fr auto;
@@ -906,6 +931,172 @@ h2 {
   border-radius: 8px;
   padding: 12px;
   background: rgba(8, 16, 24, 0.72);
+}
+
+.horus-guide {
+  margin: 14px 0 16px;
+  perspective: 1200px;
+  cursor: pointer;
+  outline: none;
+}
+
+.horus-guide:focus-visible .horus-guide-inner {
+  box-shadow: 0 0 0 3px rgba(25, 217, 255, 0.22), 0 0 36px rgba(213, 179, 93, 0.2);
+}
+
+.horus-guide-inner {
+  position: relative;
+  min-height: 360px;
+  transform-style: preserve-3d;
+  transition: transform 620ms ease;
+}
+
+.horus-guide.is-flipped .horus-guide-inner {
+  transform: rotateY(180deg);
+}
+
+.horus-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  border: 1px solid rgba(213, 179, 93, 0.5);
+  border-radius: 8px;
+  padding: 18px;
+  background:
+    linear-gradient(135deg, rgba(213, 179, 93, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(38, 31, 21, 0.94), rgba(8, 14, 22, 0.96));
+  box-shadow: 0 0 28px rgba(25, 217, 255, 0.12), inset 0 0 28px rgba(213, 179, 93, 0.08);
+}
+
+.horus-face::before,
+.horus-face::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.horus-face::before {
+  inset: 10px;
+  border: 1px solid rgba(213, 179, 93, 0.28);
+  border-radius: 6px;
+}
+
+.horus-face::after {
+  inset: auto 18px 14px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(213, 179, 93, 0.72), rgba(25, 217, 255, 0.42), transparent);
+}
+
+.horus-front {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 360px;
+  text-align: center;
+}
+
+.horus-front::before {
+  background:
+    linear-gradient(90deg, rgba(213, 179, 93, 0.12) 1px, transparent 1px),
+    linear-gradient(rgba(213, 179, 93, 0.1) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.horus-eye {
+  width: 116px;
+  color: #f0c86a;
+  filter: drop-shadow(0 0 14px rgba(213, 179, 93, 0.42)) drop-shadow(0 0 12px rgba(25, 217, 255, 0.22));
+}
+
+.horus-eye svg {
+  display: block;
+  width: 100%;
+}
+
+.horus-eye path,
+.horus-eye circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.horus-eye circle {
+  fill: rgba(25, 217, 255, 0.16);
+}
+
+.horus-kicker,
+.horus-action {
+  border: 1px solid rgba(213, 179, 93, 0.42);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #f0c86a;
+  background: rgba(213, 179, 93, 0.08);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.horus-front h4,
+.horus-back h4 {
+  margin: 0;
+  color: #f5d98c;
+  font-size: clamp(1.35rem, 6vw, 2rem);
+  text-shadow: 0 0 18px rgba(213, 179, 93, 0.24);
+}
+
+.horus-front p {
+  max-width: 260px;
+  margin: 0;
+  color: rgba(245, 247, 250, 0.84);
+  line-height: 1.5;
+}
+
+.horus-back {
+  transform: rotateY(180deg);
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-height: 360px;
+  background:
+    linear-gradient(135deg, rgba(25, 217, 255, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(29, 24, 17, 0.96), rgba(6, 11, 18, 0.96));
+}
+
+.horus-back p {
+  margin: 0;
+  color: rgba(245, 247, 250, 0.86);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.horus-rule {
+  display: grid;
+  gap: 3px;
+  border-left: 2px solid rgba(213, 179, 93, 0.66);
+  padding: 7px 0 7px 10px;
+  background: linear-gradient(90deg, rgba(213, 179, 93, 0.07), transparent);
+}
+
+.horus-rule strong {
+  color: #f5d98c;
+  font-size: 0.86rem;
+}
+
+.horus-rule span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.38;
+}
+
+.horus-flip-back {
+  width: 100%;
+  margin-top: 2px;
+  border-color: rgba(213, 179, 93, 0.46);
+  color: #f5d98c;
+  background: rgba(213, 179, 93, 0.08);
 }
 
 .toggle-field strong {

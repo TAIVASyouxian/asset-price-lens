@@ -94,7 +94,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.21</span>
+        <span class="version" id="appVersion">v1.0.22</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -167,22 +167,68 @@
         <h3 class="subsection-title">資產價格設定</h3>
         <p class="settings-note">資產價格需手動輸入；匯率可自動更新。</p>
         <p class="settings-note">股價越接近當下價格，換算結果越接近實際資產部位。</p>
+        <div class="horus-guide" id="horusGuide" role="button" tabindex="0" aria-pressed="false" aria-label="荷魯斯填值石板，點擊翻開填值規則">
+          <div class="horus-guide-inner">
+            <div class="horus-face horus-front">
+              <div class="horus-eye" aria-hidden="true">
+                <svg viewBox="0 0 120 72" focusable="false">
+                  <path d="M8 36C25 14 45 8 62 15c17 7 28 21 50 21-22 0-34 20-52 23C40 62 23 52 8 36Z"></path>
+                  <circle cx="58" cy="36" r="13"></circle>
+                  <path d="M58 49c-2 12-8 18-20 18M70 46c8 5 13 11 15 20M42 24 28 9M76 25 94 12"></path>
+                </svg>
+              </div>
+              <span class="horus-kicker">新手填值小抄</span>
+              <h4>荷魯斯填值石板</h4>
+              <p>點擊翻開，確認每個價格欄位該填什麼。</p>
+              <span class="horus-action">TAP TO REVEAL</span>
+            </div>
+            <div class="horus-face horus-back">
+              <h4>填值規則</h4>
+              <p>這裡填的是「每股價格」，不是一張價格，也不是你持有的總金額。</p>
+              <div class="horus-rule">
+                <strong>0050 今日價格</strong>
+                <span>請填 0050 每股價格。例如：97.25</span>
+              </div>
+              <div class="horus-rule">
+                <strong>台積電今日價格</strong>
+                <span>請填台積電每股價格。例如：2255</span>
+                <span>不是一張價格。台股 1 張 = 1000 股。</span>
+              </div>
+              <div class="horus-rule">
+                <strong>VT 今日價格</strong>
+                <span>請填 VT 每股美元價格。例如：155.21 USD</span>
+              </div>
+              <div class="horus-rule">
+                <strong>EWL 今日價格</strong>
+                <span>請填 EWL 每股美元價格。例如：62.85 USD</span>
+              </div>
+              <p>畫面上的結果代表：這筆消費約相當於多少股資產的價值。</p>
+              <p>商品價格 NT$90,000，0050 每股 NT$97.25：90,000 ÷ 97.25 ≈ 925.45 股 0050 的價值。</p>
+              <p>這不是即時交易報價，也不是投資建議，只是個人估算用。</p>
+              <button type="button" class="secondary-button horus-flip-back" id="horusFlipBack">翻回正面</button>
+            </div>
+          </div>
+        </div>
         <div class="form-grid">
           <label class="field" for="price0050">
             <span>0050 今日價格 (TWD)</span>
             <input id="price0050" inputmode="decimal" type="number" min="0" step="0.01">
+            <small class="field-helper">請輸入每股價格</small>
           </label>
           <label class="field" for="priceTSMC">
             <span>台積電今日價格 (TWD)</span>
             <input id="priceTSMC" inputmode="decimal" type="number" min="0" step="0.01" placeholder="台積電股價">
+            <small class="field-helper">請填每股價格，不是一張價格。台股 1 張 = 1000 股。</small>
           </label>
           <label class="field" for="priceVT">
             <span>VT 今日價格 (USD)</span>
             <input id="priceVT" inputmode="decimal" type="number" min="0" step="0.01">
+            <small class="field-helper">請輸入每股價格</small>
           </label>
           <label class="field" for="priceEWL">
             <span>EWL 今日價格 (USD)</span>
             <input id="priceEWL" inputmode="decimal" type="number" min="0" step="0.01">
+            <small class="field-helper">請輸入每股價格</small>
           </label>
         </div>
         <p class="asset-timestamp" id="lastAssetPriceUpdate">尚未手動更新資產價格</p>
