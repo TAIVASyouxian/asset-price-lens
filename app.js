@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.17";
+const APP_VERSION = "v1.0.18";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const SKIP_BOOT_KEY = "skipBootAnimation";
@@ -114,36 +114,6 @@ let bootShownThisLoad = false;
 
 function hasAccess() {
   return localStorage.getItem(ACCESS_GRANTED_KEY) === "true";
-}
-
-function renderAccessState() {
-  const granted = hasAccess();
-  els.accessGate.hidden = granted;
-  els.appShell.classList.toggle("access-locked", !granted);
-  if (!granted) {
-    window.setTimeout(() => els.accessCode.focus(), 0);
-  }
-}
-
-function grantAccess() {
-  els.accessError.classList.add("success");
-  els.accessError.textContent = "權限通過｜資產感測模組啟動中…";
-  els.accessProgress.classList.add("active");
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const bootDuration = prefersReducedMotion ? 450 : 1750;
-  window.setTimeout(() => {
-    els.accessGate.hidden = true;
-    els.bootScreen.hidden = false;
-  }, prefersReducedMotion ? 80 : 220);
-  window.setTimeout(() => {
-    localStorage.setItem(ACCESS_GRANTED_KEY, "true");
-    els.accessError.textContent = "";
-    els.accessError.classList.remove("success");
-    els.accessProgress.classList.remove("active");
-    els.accessCode.value = "";
-    els.bootScreen.hidden = true;
-    renderAccessState();
-  }, bootDuration);
 }
 
 function skipBootEnabled() {
