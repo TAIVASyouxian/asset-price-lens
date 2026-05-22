@@ -13,16 +13,28 @@
   <body>
     <section class="access-gate" id="accessGate" aria-labelledby="accessTitle">
       <div class="access-card">
-        <p class="eyebrow">資產尺</p>
-        <h1 id="accessTitle">私人測試版</h1>
-        <p>此工具目前僅供受邀測試者使用。</p>
-        <label class="field" for="accessCode">
-          <span>測試碼</span>
-          <input id="accessCode" type="password" autocomplete="off" inputmode="text">
+        <div class="scan-line" aria-hidden="true"></div>
+        <div class="access-topline">
+          <span class="status-dot"></span>
+          <p class="eyebrow">TAIVAS PRIVATE NODE</p>
+          <span>LOCAL ACCESS ONLY</span>
+        </div>
+        <div class="access-icon" aria-hidden="true">⌬</div>
+        <h1 id="accessTitle">資產尺｜機密感測入口</h1>
+        <p>請輸入測試碼以啟動私人資產感測模組。</p>
+        <div class="access-status-row" aria-hidden="true">
+          <span>SYSTEM CHECK</span>
+          <span>PRIVATE BETA CHANNEL</span>
+        </div>
+        <label class="field access-field" for="accessCode">
+          <span>ACCESS CODE</span>
+          <input id="accessCode" type="password" autocomplete="off" inputmode="text" placeholder="輸入測試碼">
         </label>
-        <button type="button" class="secondary-button access-button" id="accessSubmit">進入資產尺</button>
+        <button type="button" class="secondary-button access-button" id="accessSubmit">驗證權限</button>
+        <div class="access-progress" id="accessProgress" aria-hidden="true"><span></span></div>
         <p class="access-error" id="accessError" role="alert"></p>
-        <small>這是個人用途的輕量測試入口，不是安全驗證或正式登入系統。</small>
+        <small>私人測試版｜僅供受邀測試者使用</small>
+        <small>此入口為個人用途的輕量測試入口，不是正式登入系統。</small>
       </div>
     </section>
 
@@ -33,7 +45,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.13</span>
+        <span class="version" id="appVersion">v1.0.15</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -90,6 +102,7 @@
           <p>ETF 價格為手動輸入估算值。</p>
         </div>
         <p class="settings-note">資產尺是消費前的資產價值感測工具，用來幫助理解支出的機會成本，不是正式財務決策系統。</p>
+        <p class="settings-note">設計原則：這是為擁有者工作流打造的私人控制中心，可以有一點科幻感，但產品邊界必須清楚。</p>
         <p class="settings-note">匯率可自動更新；資產價格需手動輸入，且僅供估算資產價值感，不代表即時交易報價。</p>
         <p class="settings-note">產品邊界：本工具不是券商 App、交易工具、投資建議工具、股票報價工具、理財推薦工具或正式財務規劃系統。</p>
         <p class="settings-note">匯率可自動更新；ETF 價格需手動輸入。</p>

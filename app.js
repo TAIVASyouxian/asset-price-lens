@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.13";
+const APP_VERSION = "v1.0.15";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const ACCESS_CODE = "TAIVAS-GJ";
@@ -10,6 +10,10 @@ Product boundary lock:
 - 資產尺 is a private personal-use estimation PWA and consumer-side asset-value
   sensing tool for estimating the opportunity cost of a purchase.
 - Always describe it as: 消費前的資產價值感測工具.
+- Design principle: it is primarily for the owner's own workflow and enjoyment;
+  it may feel customized, slightly sci-fi, and like a private control center. It
+  does not need to look like a generic finance app or appeal to everyone.
+  Core vibe: 自己看自己爽，但邊界清楚。
 - It is not a brokerage app, stock trading app, investment advisory app,
   buy/sell signal tool, real-time financial quote system, replacement for bank /
   broker / exchange / official market data, or enterprise financial decision
@@ -58,6 +62,7 @@ const els = {
   accessCode: document.querySelector("#accessCode"),
   accessSubmit: document.querySelector("#accessSubmit"),
   accessError: document.querySelector("#accessError"),
+  accessProgress: document.querySelector("#accessProgress"),
   appVersion: document.querySelector("#appVersion"),
   productPrice: document.querySelector("#productPrice"),
   convertedPrice: document.querySelector("#convertedPrice"),
@@ -109,10 +114,17 @@ function renderAccessState() {
 }
 
 function grantAccess() {
-  localStorage.setItem(ACCESS_GRANTED_KEY, "true");
-  els.accessError.textContent = "";
-  els.accessCode.value = "";
-  renderAccessState();
+  els.accessError.classList.add("success");
+  els.accessError.textContent = "權限通過｜資產感測模組啟動中…";
+  els.accessProgress.classList.add("active");
+  window.setTimeout(() => {
+    localStorage.setItem(ACCESS_GRANTED_KEY, "true");
+    els.accessError.textContent = "";
+    els.accessError.classList.remove("success");
+    els.accessProgress.classList.remove("active");
+    els.accessCode.value = "";
+    renderAccessState();
+  }, 760);
 }
 
 function loadState() {
@@ -419,7 +431,8 @@ function bindEvents() {
       grantAccess();
       return;
     }
-    els.accessError.textContent = "測試碼錯誤，請確認後再試。";
+    els.accessError.classList.remove("success");
+    els.accessError.textContent = "權限拒絕：測試碼錯誤";
   });
 
   els.accessCode.addEventListener("keydown", (event) => {

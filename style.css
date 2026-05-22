@@ -52,12 +52,27 @@ button {
 }
 
 .access-gate {
-  width: min(100%, 520px);
+  position: relative;
+  width: min(100%, 540px);
   min-height: 100vh;
   margin: 0 auto;
   padding: max(26px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
   display: grid;
   place-items: center;
+  overflow: hidden;
+}
+
+.access-gate::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(81, 212, 165, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(81, 212, 165, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 8%, rgba(81, 212, 165, 0.18), transparent 28rem),
+    radial-gradient(circle at 20% 85%, rgba(78, 167, 255, 0.1), transparent 20rem);
+  background-size: 28px 28px, 28px 28px, auto, auto;
+  pointer-events: none;
 }
 
 .access-gate[hidden] {
@@ -65,16 +80,82 @@ button {
 }
 
 .access-card {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(139, 228, 197, 0.35);
   border-radius: 8px;
-  padding: 20px;
-  background: rgba(23, 35, 45, 0.96);
-  box-shadow: var(--shadow);
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(18, 32, 42, 0.9), rgba(10, 17, 24, 0.94));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42), 0 0 40px rgba(81, 212, 165, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.scan-line {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(139, 228, 197, 0.95), transparent);
+  animation: scan-line 3.4s linear infinite;
+  opacity: 0.65;
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(420px);
+  }
+}
+
+.access-topline,
+.access-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.access-topline .eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px rgba(81, 212, 165, 0.9);
+  animation: status-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  50% {
+    opacity: 0.42;
+  }
+}
+
+.access-icon {
+  width: 52px;
+  height: 52px;
+  margin: 22px 0 14px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(139, 228, 197, 0.5);
+  border-radius: 50%;
+  color: var(--accent-strong);
+  background: rgba(81, 212, 165, 0.08);
+  box-shadow: 0 0 28px rgba(81, 212, 165, 0.15);
+  font-size: 1.7rem;
 }
 
 .access-card h1 {
   margin-bottom: 10px;
+  font-size: clamp(1.9rem, 8vw, 3rem);
 }
 
 .access-card p {
@@ -82,9 +163,45 @@ button {
   line-height: 1.5;
 }
 
+.access-status-row {
+  margin: 18px 0 12px;
+  border-block: 1px solid rgba(139, 228, 197, 0.18);
+  padding: 9px 0;
+}
+
+.access-field input {
+  border-color: rgba(139, 228, 197, 0.32);
+  letter-spacing: 0.08em;
+}
+
 .access-button {
   width: 100%;
   margin-top: 14px;
+  border-color: rgba(139, 228, 197, 0.45);
+  color: #082018;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  font-weight: 700;
+}
+
+.access-progress {
+  height: 4px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: rgba(139, 228, 197, 0.12);
+  overflow: hidden;
+}
+
+.access-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-strong);
+  transition: width 700ms ease;
+}
+
+.access-progress.active span {
+  width: 100%;
 }
 
 .access-error {
@@ -92,6 +209,16 @@ button {
   margin: 10px 0 6px;
   color: #ffd4d4;
   font-size: 0.9rem;
+}
+
+.access-error.success {
+  color: var(--accent-strong);
+}
+
+.access-card small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
 }
 
 .app-header {
@@ -542,7 +669,7 @@ footer p {
   }
 
   .access-card {
-    background: rgba(255, 255, 255, 0.96);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 250, 249, 0.94));
   }
 
   .primary-panel {
