@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.24";
+const APP_VERSION = "v1.0.25";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_HISTORY_KEY = "fxRateHistory";
 const ACCESS_GRANTED_KEY = "accessGranted";
@@ -103,8 +103,10 @@ const els = {
   fxTrendMinMax: document.querySelector("#fxTrendMinMax"),
   fxTrendChart: document.querySelector("#fxTrendChart"),
   fxTrendEmpty: document.querySelector("#fxTrendEmpty"),
-  horusGuide: document.querySelector("#horusGuide"),
-  horusFlipBack: document.querySelector("#horusFlipBack"),
+  calibrationGuide: document.querySelector("#calibrationGuide"),
+  calibrationToggle: document.querySelector("#calibrationToggle"),
+  calibrationBody: document.querySelector("#calibrationBody"),
+  calibrationToggleText: document.querySelector("#calibrationToggleText"),
   decimalMode: document.querySelector("#decimalMode"),
   installmentMonths: document.querySelector("#installmentMonths"),
   monthlyPayment: document.querySelector("#monthlyPayment"),
@@ -585,9 +587,14 @@ function calculate() {
   const sharesEWL = priceEWL ? priceTwd / priceEWL : 0;
 
   els.convertedPrice.textContent = formatCurrency(priceTwd, "TWD");
-  els.shares0050.textContent = formatShares(shares0050);
-  els.sharesVT.textContent = formatShares(sharesVT);
-  els.sharesEWL.textContent = formatShares(sharesEWL);
+  els.shares0050.textContent = `約相當於 ${formatShares(shares0050)} 股`;
+  els.sharesVT.textContent = `約相當於 ${formatShares(sharesVT)} 股`;
+  els.sharesEWL.textContent = `約相當於 ${formatShares(sharesEWL)} 股`;
+  [els.shares0050, els.sharesVT, els.sharesEWL, els.sharesTSMC, els.convertedPrice].forEach((element) => {
+    element.classList.remove("value-pulse");
+    void element.offsetWidth;
+    element.classList.add("value-pulse");
+  });
   if (priceTSMC) {
     els.sharesTSMC.textContent = `約相當於 ${formatShares(sharesTSMC)} 股台積電`;
     els.sharesTSMCNote.textContent = "台積電";
@@ -645,23 +652,12 @@ function bindEvents() {
     }
   });
 
-  els.horusGuide.addEventListener("click", () => {
-    const flipped = !els.horusGuide.classList.contains("is-flipped");
-    els.horusGuide.classList.toggle("is-flipped", flipped);
-    els.horusGuide.setAttribute("aria-pressed", String(flipped));
-  });
-
-  els.horusGuide.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      els.horusGuide.click();
-    }
-  });
-
-  els.horusFlipBack.addEventListener("click", (event) => {
-    event.stopPropagation();
-    els.horusGuide.classList.remove("is-flipped");
-    els.horusGuide.setAttribute("aria-pressed", "false");
+  els.calibrationToggle.addEventListener("click", () => {
+    const expanded = els.calibrationToggle.getAttribute("aria-expanded") === "true";
+    els.calibrationToggle.setAttribute("aria-expanded", String(!expanded));
+    els.calibrationBody.hidden = expanded;
+    els.calibrationGuide.classList.toggle("is-open", !expanded);
+    els.calibrationToggleText.textContent = expanded ? "展開填值校準" : "收合填值校準";
   });
 
   bindInput(els.productPrice, (value) => { state.productPrice = value; });
