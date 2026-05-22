@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.0.19";
+const APP_VERSION = "v1.0.20";
 const STORAGE_KEY = "assetPriceLensState";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const SKIP_BOOT_KEY = "skipBootAnimation";
@@ -132,7 +132,7 @@ function setBootContent(mode) {
         title: "資產尺控制台啟動中",
         badges: ["LOCAL ACCESS", "PRIVATE NODE", "ASSET SENSOR ONLINE"],
         lines: ["本機授權確認… OK", "匯率節點待命… OK", "資產感測模組同步… OK", "私人控制台準備完成… OK"],
-        bottom: "SYSTEM ONLINE\nWELCOME BACK, EDWARD."
+        bottom: "SYSTEM ONLINE\nWELCOME BACK, EDWARD"
       }
     : {
         title: "權限通過",
