@@ -1,14 +1,14 @@
-const APP_VERSION = "v1.0.10";
+const APP_VERSION = "v1.0.11";
 const STORAGE_KEY = "assetPriceLensState";
 const FX_API_URL = "https://open.er-api.com/v6/latest/USD";
 const MANUAL_FX_COOLDOWN_MS = 5 * 60 * 1000;
 
 /*
-Product boundary: 資產尺 is a personal-use estimation tool for sensing the
-asset-value feeling and opportunity cost of a purchase. FX reference rates may
-auto-update, but asset prices must remain manually entered. Do not add stock,
-ETF, brokerage, trading, buy/sell signal, investment advice, or real-time quote
-features unless the product boundary is explicitly changed by the user.
+Product boundary: 資產尺 is a private beta, personal-use estimation tool for
+sensing the asset-value feeling and opportunity cost of a purchase. FX reference
+rates may auto-update, but asset prices must remain manually entered. Do not add
+stock, ETF, brokerage, trading, buy/sell signal, investment advice, or real-time
+quote features unless the product boundary is explicitly changed by the user.
 */
 
 const defaults = {

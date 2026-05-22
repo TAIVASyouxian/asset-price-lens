@@ -88,7 +88,8 @@ h2 {
 }
 
 .version,
-.status-pill {
+.status-pill,
+.beta-badge {
   flex: 0 0 auto;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -96,6 +97,13 @@ h2 {
   color: var(--accent-strong);
   background: rgba(81, 212, 165, 0.08);
   font-size: 0.78rem;
+}
+
+.beta-badge {
+  display: inline-flex;
+  margin-top: 10px;
+  color: var(--muted);
+  background: rgba(15, 23, 31, 0.72);
 }
 
 .panel {
