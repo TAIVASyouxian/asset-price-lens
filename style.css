@@ -891,16 +891,26 @@ h2 {
   .horus-guide-inner,
   .horus-front,
   .horus-back {
-    min-height: 430px;
+    height: min(76vh, 620px);
+    min-height: 520px;
   }
 
   .horus-face {
-    padding: 16px;
+    padding: 15px;
   }
 
   .horus-back p,
   .horus-rule span {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
+  }
+
+  .horus-back {
+    gap: 8px;
+    padding-bottom: 30px;
+  }
+
+  .horus-rule {
+    padding-block: 6px;
   }
 }
 
@@ -946,7 +956,8 @@ h2 {
 
 .horus-guide-inner {
   position: relative;
-  min-height: 360px;
+  height: clamp(500px, 68vh, 620px);
+  min-height: 500px;
   transform-style: preserve-3d;
   transition: transform 620ms ease;
 }
@@ -992,7 +1003,7 @@ h2 {
   display: grid;
   place-items: center;
   gap: 10px;
-  min-height: 360px;
+  min-height: 100%;
   text-align: center;
 }
 
@@ -1059,10 +1070,22 @@ h2 {
   display: grid;
   gap: 10px;
   align-content: start;
-  min-height: 360px;
+  min-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 28px;
   background:
     linear-gradient(135deg, rgba(25, 217, 255, 0.08), transparent 34%),
     linear-gradient(180deg, rgba(29, 24, 17, 0.96), rgba(6, 11, 18, 0.96));
+}
+
+.horus-back::-webkit-scrollbar {
+  width: 5px;
+}
+
+.horus-back::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(213, 179, 93, 0.42);
 }
 
 .horus-back p {
