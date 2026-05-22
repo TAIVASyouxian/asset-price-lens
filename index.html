@@ -94,7 +94,7 @@
           <h1>資產尺</h1>
           <span class="beta-badge">私人測試版｜僅供個人估算</span>
         </div>
-        <span class="version" id="appVersion">v1.0.20</span>
+        <span class="version" id="appVersion">v1.0.21</span>
       </header>
 
       <section class="panel primary-panel" aria-labelledby="price-heading">
@@ -230,6 +230,41 @@
             </select>
           </label>
         </div>
+      </section>
+
+      <section class="panel fx-trend-panel" aria-labelledby="fx-trend-heading">
+        <div class="section-title">
+          <h2 id="fx-trend-heading">匯率趨勢</h2>
+          <p>本機保存之每日參考匯率紀錄</p>
+        </div>
+        <div class="trend-controls">
+          <label class="field" for="fxTrendPair">
+            <span>參考匯率</span>
+            <select id="fxTrendPair">
+              <option value="usdTwd">USD/TWD</option>
+              <option value="eurTwd">EUR/TWD</option>
+              <option value="chfTwd">CHF/TWD</option>
+            </select>
+          </label>
+          <label class="field" for="fxTrendRange">
+            <span>範圍</span>
+            <select id="fxTrendRange">
+              <option value="7">最近 7 筆</option>
+              <option value="30">最近 30 筆</option>
+              <option value="90">最近 90 筆</option>
+            </select>
+          </label>
+        </div>
+        <div class="trend-summary">
+          <span id="fxTrendLatest">最新：--</span>
+          <span id="fxTrendMinMax">最低 / 最高：--</span>
+        </div>
+        <div class="trend-chart-wrap">
+          <svg id="fxTrendChart" class="trend-chart" viewBox="0 0 320 170" role="img" aria-label="匯率趨勢圖"></svg>
+          <p class="trend-empty" id="fxTrendEmpty">尚無足夠匯率紀錄。每日更新匯率後，這裡會逐漸形成趨勢圖。</p>
+        </div>
+        <p class="settings-note">匯率趨勢僅根據本機保存之參考匯率紀錄產生，僅供估算參考，不代表即時交易匯率或銀行成交匯率。</p>
+        <button type="button" class="secondary-button small-action" id="clearFxHistoryBtn">清除匯率趨勢紀錄</button>
       </section>
 
       <section class="panel" aria-labelledby="extras-heading">

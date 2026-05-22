@@ -1,5 +1,6 @@
-const APP_VERSION = "v1.0.20";
+const APP_VERSION = "v1.0.21";
 const STORAGE_KEY = "assetPriceLensState";
+const FX_HISTORY_KEY = "fxRateHistory";
 const ACCESS_GRANTED_KEY = "accessGranted";
 const SKIP_BOOT_KEY = "skipBootAnimation";
 const ACCESS_CODE = "TAIVAS-GJ";
@@ -96,6 +97,12 @@ const els = {
   eurTwd: document.querySelector("#eurTwd"),
   chfTwd: document.querySelector("#chfTwd"),
   lastFxUpdate: document.querySelector("#lastFxUpdate"),
+  fxTrendPair: document.querySelector("#fxTrendPair"),
+  fxTrendRange: document.querySelector("#fxTrendRange"),
+  fxTrendLatest: document.querySelector("#fxTrendLatest"),
+  fxTrendMinMax: document.querySelector("#fxTrendMinMax"),
+  fxTrendChart: document.querySelector("#fxTrendChart"),
+  fxTrendEmpty: document.querySelector("#fxTrendEmpty"),
   decimalMode: document.querySelector("#decimalMode"),
   installmentMonths: document.querySelector("#installmentMonths"),
   monthlyPayment: document.querySelector("#monthlyPayment"),
@@ -107,6 +114,7 @@ const els = {
   resetBtn: document.querySelector("#resetBtn"),
   reloadAppBtn: document.querySelector("#reloadAppBtn"),
   clearAccessBtn: document.querySelector("#clearAccessBtn"),
+  clearFxHistoryBtn: document.querySelector("#clearFxHistoryBtn"),
   skipBootAnimation: document.querySelector("#skipBootAnimation"),
   currencyButtons: [...document.querySelectorAll("[data-currency]")]
 };
@@ -244,6 +252,38 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function loadFxHistory() {
+  try {
+    const history = JSON.parse(localStorage.getItem(FX_HISTORY_KEY));
+    return Array.isArray(history) ? history : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFxHistory(history) {
+  localStorage.setItem(FX_HISTORY_KEY, JSON.stringify(history.slice(-90)));
+}
+
+function recordFxHistory() {
+  if (!hasSavedFx()) return;
+  const date = state.fx.rateDate || todayKey();
+  const record = {
+    date,
+    fetchedAt: state.fx.fetchedAt || new Date().toISOString(),
+    usdTwd: numberValue(state.fx.usdTwd),
+    eurTwd: numberValue(state.fx.eurTwd),
+    chfTwd: numberValue(state.fx.chfTwd),
+    source: state.fx.source || ""
+  };
+  if (!record.usdTwd || !record.eurTwd || !record.chfTwd) return;
+
+  const history = loadFxHistory().filter((item) => item?.date !== date);
+  history.push(record);
+  history.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  saveFxHistory(history);
+}
+
 function numberValue(value) {
   const num = Number(value);
   return Number.isFinite(num) && num > 0 ? num : 0;
@@ -306,6 +346,78 @@ function updateLastAssetPriceLabel() {
     : "尚未手動更新資產價格";
 }
 
+function renderFxTrendChart() {
+  const pair = els.fxTrendPair.value;
+  const limit = Number(els.fxTrendRange.value) || 7;
+  const labels = {
+    usdTwd: "USD/TWD",
+    eurTwd: "EUR/TWD",
+    chfTwd: "CHF/TWD"
+  };
+  const history = loadFxHistory()
+    .filter((record) => numberValue(record?.[pair]))
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)))
+    .slice(-limit);
+
+  els.fxTrendChart.innerHTML = "";
+
+  if (history.length < 2) {
+    els.fxTrendEmpty.hidden = false;
+    els.fxTrendLatest.textContent = "最新：--";
+    els.fxTrendMinMax.textContent = "最低 / 最高：--";
+    return;
+  }
+
+  els.fxTrendEmpty.hidden = true;
+  const values = history.map((record) => numberValue(record[pair]));
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const latest = values[values.length - 1];
+  const padding = 22;
+  const width = 320;
+  const height = 170;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+  const range = max - min || 1;
+  const points = history.map((record, index) => {
+    const x = padding + (history.length === 1 ? chartWidth : (index / (history.length - 1)) * chartWidth);
+    const y = padding + chartHeight - ((numberValue(record[pair]) - min) / range) * chartHeight;
+    return { x, y, value: numberValue(record[pair]), date: record.date };
+  });
+  const line = points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+
+  els.fxTrendLatest.textContent = `最新 ${labels[pair]}：${latest.toFixed(4)}`;
+  els.fxTrendMinMax.textContent = `最低 / 最高：${min.toFixed(4)} / ${max.toFixed(4)}`;
+  els.fxTrendChart.innerHTML = `
+    <defs>
+      <linearGradient id="trendLineGradient" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="#3aa7ff"></stop>
+        <stop offset="55%" stop-color="#19d9ff"></stop>
+        <stop offset="100%" stop-color="#8eeeff"></stop>
+      </linearGradient>
+      <filter id="trendGlow">
+        <feGaussianBlur stdDeviation="2.5" result="blur"></feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+    <g class="trend-grid">
+      <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}"></line>
+      <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}"></line>
+      <line x1="${padding}" y1="${padding + chartHeight / 2}" x2="${width - padding}" y2="${padding + chartHeight / 2}"></line>
+    </g>
+    <polyline class="trend-line trend-line-glow" points="${line}"></polyline>
+    <polyline class="trend-line" points="${line}"></polyline>
+    <g class="trend-dots">
+      ${points.map((point) => `<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="3.2"><title>${point.date}: ${point.value.toFixed(4)}</title></circle>`).join("")}
+    </g>
+    <text class="trend-axis-label" x="${padding}" y="${padding - 7}">${max.toFixed(4)}</text>
+    <text class="trend-axis-label" x="${padding}" y="${height - 6}">${min.toFixed(4)}</text>
+  `;
+}
+
 function syncInputs() {
   els.appVersion.textContent = APP_VERSION;
   els.productPrice.value = state.productPrice;
@@ -328,6 +440,7 @@ function syncInputs() {
   els.target0050.value = state.target0050;
   updateCurrencyButtons();
   updateFxStatus();
+  renderFxTrendChart();
   calculate();
 }
 
@@ -399,6 +512,7 @@ async function fetchRates(force = false) {
     };
 
     saveState();
+    recordFxHistory();
     syncInputs();
     els.fxStatus.textContent = "線上：使用最新每日參考匯率";
     return true;
@@ -589,11 +703,20 @@ function bindEvents() {
 
   els.updateRatesBtn.addEventListener("click", () => requestManualFxUpdate());
 
+  els.fxTrendPair.addEventListener("change", () => renderFxTrendChart());
+  els.fxTrendRange.addEventListener("change", () => renderFxTrendChart());
+
   els.resetBtn.addEventListener("click", () => {
     if (!confirm("確定要重設所有已儲存資料？")) return;
     localStorage.removeItem(STORAGE_KEY);
     state = loadState();
     syncInputs();
+  });
+
+  els.clearFxHistoryBtn.addEventListener("click", () => {
+    if (!confirm("確定要清除本機保存的匯率趨勢紀錄？")) return;
+    localStorage.removeItem(FX_HISTORY_KEY);
+    renderFxTrendChart();
   });
 
   els.skipBootAnimation.addEventListener("change", () => {

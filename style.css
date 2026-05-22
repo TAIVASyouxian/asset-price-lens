@@ -879,6 +879,10 @@ h2 {
     flex-basis: 100%;
     text-align: left;
   }
+
+  .trend-controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 .field,
@@ -1132,6 +1136,107 @@ select:focus {
 
 .summary-box strong {
   font-size: 1.18rem;
+}
+
+.fx-trend-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.trend-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.trend-summary {
+  display: grid;
+  gap: 6px;
+  border-block: 1px solid rgba(25, 217, 255, 0.14);
+  padding: 10px 0;
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+}
+
+.trend-chart-wrap {
+  position: relative;
+  min-height: 190px;
+  border: 1px solid rgba(25, 217, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  background:
+    linear-gradient(rgba(25, 217, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 217, 255, 0.035) 1px, transparent 1px),
+    rgba(3, 10, 17, 0.56);
+  background-size: 22px 22px, 22px 22px, auto;
+  overflow: hidden;
+}
+
+.trend-chart-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgba(25, 217, 255, 0.06), transparent);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.trend-chart {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  min-height: 178px;
+}
+
+.trend-grid line {
+  stroke: rgba(142, 238, 255, 0.18);
+  stroke-width: 1;
+}
+
+.trend-line {
+  fill: none;
+  stroke: url("#trendLineGradient");
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: url("#trendGlow");
+}
+
+.trend-line-glow {
+  stroke-width: 6;
+  opacity: 0.18;
+}
+
+.trend-dots circle {
+  fill: var(--accent-strong);
+  stroke: rgba(3, 10, 17, 0.86);
+  stroke-width: 1.2;
+  filter: url("#trendGlow");
+}
+
+.trend-axis-label {
+  fill: rgba(169, 183, 196, 0.82);
+  font-size: 9px;
+}
+
+.trend-empty {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  text-align: center;
+  background: rgba(3, 10, 17, 0.62);
+}
+
+.trend-empty[hidden] {
+  display: none;
 }
 
 details {
